@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+
+  member-service:
+    image: openjdk:22-jdk-oracle
+    container_name: memberimage
+    ports:
+      - "8080:8080"
+      - "8000:8000"
+    expose:
+      - "8000"
+    depends_on:
+      - memberservice-db
+    networks:
+      - greenspot-net
+    volumes:
+      - ./build/libs/MemberService-v0.0.1.jar:/app/app.jar
+    working_dir: /app
+    entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
+
+  memberservice-db:
+    image: mongo:latest
+    container_name: memberservicedb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_memberservice:/etc/mongo
+      - mongo_memberservice_data:/data/db
+      - mongo_memberservice_config:/data/configdb
+    networks:
+      - greenspot-net
+
+networks:
+  greenspot-net:
+    name: greenspot_net
+
+volumes:
+    mongo_memberservice:
+    mongo_memberservice_data:
+    mongo_memberservice_config:
