@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 
 services:
 
@@ -6,10 +6,10 @@ services:
     image: openjdk:22-jdk-oracle
     container_name: memberimage
     ports:
-      - "8080:8080"
-      - "8000:8000"
+      - "8083:8080"
+      - "8003:8000"
     expose:
-      - "8000"
+      - "8003"
     depends_on:
       - memberservice-db
     networks:
@@ -23,7 +23,7 @@ services:
     image: mongo:latest
     container_name: memberservicedb
     ports:
-      - "27017:27017"
+      - "27019:27017"
     volumes:
       - mongo_memberservice:/etc/mongo
       - mongo_memberservice_data:/data/db

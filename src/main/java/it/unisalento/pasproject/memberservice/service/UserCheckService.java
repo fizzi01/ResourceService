@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserCheckService {
 
-    @Value("${service.role.utente.name}")
+    @Value("${service.role.name}")
     public String ROLE;
 
     @Autowired

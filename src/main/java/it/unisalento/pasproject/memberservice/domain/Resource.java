@@ -8,24 +8,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 @Document(collection = "resource")
-public class Resource {
-    //Questa collezione descrive una capacità computazionale
-    //TODO: Modificare il documento opportunamente
-
+public abstract class Resource {
     @Id
     private String id;
     private String name;
-    private String processorBrand;
-    private String processorModel;
-    private double processorSpeedGHz;
-    private int numberOfCores;
-    private int cacheSizeMB;
-    private int memorySizeGB;
-    private String memoryType;
-    private String operatingSystem;
+    private String type;
+    private String brand;
+    private String model;
     private String greenEnergyType;
     private int availableHours;
     private double kWh;
-    private double computePower;
     private String memberEmail;
+    private Boolean isAvailable;
 }

@@ -1,23 +1,31 @@
 package it.unisalento.pasproject.memberservice.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
+        property = "type",
+        visible = true
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = ResourceCpuDTO.class, name = "cpu"),
+        @JsonSubTypes.Type(value = ResourceGpuDTO.class, name = "gpu")
+})
 @Getter
 @Setter
-public class ResourceDTO {
+public abstract class ResourceDTO {
+    private String id;
     private String name;
-    private String processorBrand;
-    private String processorModel;
-    private double processorSpeedGHz;
-    private int numberOfCores;
-    private int cacheSizeMB;
-    private int memorySizeGB;
-    private String memoryType;
-    private String operatingSystem;
+    private String type;
+    private String brand;
+    private String model;
     private String greenEnergyType;
     private int availableHours;
     private double kWh;
-    private double computePower;
     private String memberEmail;
+    private Boolean isAvailable;
 }
