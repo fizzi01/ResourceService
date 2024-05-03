@@ -43,9 +43,78 @@ public class RabbitMQConfig {
                 .with(securityRequestRoutingKey);
     }
 
-    // ------  END SECURITY  ------
+    // ------  END SECURITY  ------ //
 
+    // ------  RESOURCE MESSAGES  ------ //
+    @Value("${rabbitmq.queue.newresource.name}")
+    private String newResourceQueue;
 
+    @Value("${rabbitmq.routing.newresource.key}")
+    private String newResourceTopic;
+
+    @Value("${rabbitmq.queue.resourceassignment.name}")
+    private String resourceAssignmentQueue;
+
+    @Value("${rabbitmq.routing.resourceassignment.key}")
+    private String resourceAssignmentTopic;
+
+    //TODO: Vedere se questa coda e questo topic sono necessari
+    @Value("${rabbitmq.queue.resourceusage.name}")
+    private String resourceUsageQueue;
+
+    @Value("${rabbitmq.routing.resourceusage.key}")
+    private String resourceUsageTopic;
+
+    // Others queues and topics for resource messages
+
+    @Value("${rabbitmq.exchange.data.name}")
+    private String resourceDataExchange;
+
+    @Bean
+    public Queue newResourceQueue() {
+        return new Queue(newResourceQueue);
+    }
+
+    @Bean
+    public Queue resourceAssignmentQueue() {
+        return new Queue(resourceAssignmentQueue);
+    }
+
+    @Bean
+    public Queue resourceUsageQueue() {
+        return new Queue(resourceUsageQueue);
+    }
+
+    @Bean
+    public TopicExchange resourceDataExchange() {
+        return new TopicExchange(resourceDataExchange);
+    }
+
+    @Bean
+    public Binding newResourceBinding() {
+        return BindingBuilder
+                .bind(newResourceQueue())
+                .to(resourceDataExchange())
+                .with(newResourceTopic);
+    }
+
+    @Bean
+    public Binding resourceAssignmentBinding() {
+        return BindingBuilder
+                .bind(resourceAssignmentQueue())
+                .to(resourceDataExchange())
+                .with(resourceAssignmentTopic);
+    }
+
+    @Bean
+    public Binding resourceUsageBinding() {
+        return BindingBuilder
+                .bind(resourceUsageQueue())
+                .to(resourceDataExchange())
+                .with(resourceUsageTopic);
+    }
+
+    // ------  END RESOURCE MESSAGES  ------ //
 
     /**
      * Creates a message converter for JSON messages.

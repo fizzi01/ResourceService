@@ -28,4 +28,5 @@ public abstract class ResourceDTO {
     private double kWh;
     private String memberEmail;
     private Boolean isAvailable;
+    private String assignedUser;
 }

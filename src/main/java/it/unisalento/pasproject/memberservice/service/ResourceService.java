@@ -105,6 +105,7 @@ public class ResourceService {
         dto.setKWh(resourceCPU.getKWh());
         dto.setMemberEmail(resourceCPU.getMemberEmail());
         dto.setIsAvailable(resourceCPU.getIsAvailable());
+        dto.setAssignedUser(resourceCPU.getAssignedUser());
         dto.setArchitecture(resourceCPU.getArchitecture());
         dto.setCores(resourceCPU.getCores());
         dto.setThreads(resourceCPU.getThreads());
@@ -133,6 +134,7 @@ public class ResourceService {
         dto.setKWh(resourceGPU.getKWh());
         dto.setMemberEmail(resourceGPU.getMemberEmail());
         dto.setIsAvailable(resourceGPU.getIsAvailable());
+        dto.setAssignedUser(resourceGPU.getAssignedUser());
         dto.setArchitecture(resourceGPU.getArchitecture());
         dto.setVramType(resourceGPU.getVramType());
         dto.setVramSize(resourceGPU.getVramSize());
@@ -150,21 +152,22 @@ public class ResourceService {
     }
 
     public Resource updateResource(Resource resource, ResourceDTO resourceDTO) {
-        Optional.of(resourceDTO.getName()).ifPresent(resource::setName);
-        Optional.of(resourceDTO.getType()).ifPresent(resource::setType);
-        Optional.of(resourceDTO.getBrand()).ifPresent(resource::setBrand);
-        Optional.of(resourceDTO.getModel()).ifPresent(resource::setModel);
-        Optional.of(resourceDTO.getGreenEnergyType()).ifPresent(resource::setGreenEnergyType);
-        Optional.of(resourceDTO.getAvailableHours()).ifPresent(resource::setAvailableHours);
-        Optional.of(resourceDTO.getKWh()).ifPresent(resource::setKWh);
-        Optional.of(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
-        Optional.of(resourceDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        Optional.ofNullable(resourceDTO.getName()).ifPresent(resource::setName);
+        Optional.ofNullable(resourceDTO.getType()).ifPresent(resource::setType);
+        Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resource::setBrand);
+        Optional.ofNullable(resourceDTO.getModel()).ifPresent(resource::setModel);
+        Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resource::setGreenEnergyType);
+        Optional.ofNullable(resourceDTO.getAvailableHours()).ifPresent(resource::setAvailableHours);
+        Optional.ofNullable(resourceDTO.getKWh()).ifPresent(resource::setKWh);
+        Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
+        Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        Optional.ofNullable(resourceDTO.getAssignedUser()).ifPresent(resource::setAssignedUser);
 
         return resource;
     }
 
     public ResourceCPU updateResourceCPU(ResourceCPU resourceCPU, ResourceCpuDTO resourceCpuDTO) {
-        Optional.of(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
+        Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
         Optional.of(resourceCpuDTO.getCores()).ifPresent(resourceCPU::setCores);
         Optional.of(resourceCpuDTO.getThreads()).ifPresent(resourceCPU::setThreads);
         Optional.of(resourceCpuDTO.getBaseFrequency()).ifPresent(resourceCPU::setBaseFrequency);
@@ -180,12 +183,12 @@ public class ResourceService {
     }
 
     public ResourceGPU updateResourceGPU(ResourceGPU resourceGPU, ResourceGpuDTO resourceGpuDTO) {
-        Optional.of(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
-        Optional.of(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
+        Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
+        Optional.ofNullable(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
         Optional.of(resourceGpuDTO.getVramSize()).ifPresent(resourceGPU::setVramSize);
         Optional.of(resourceGpuDTO.getCoreClock()).ifPresent(resourceGPU::setCoreClock);
         Optional.of(resourceGpuDTO.getBoostClock()).ifPresent(resourceGPU::setBoostClock);
-        Optional.of(resourceGpuDTO.getMemoryClock()).ifPresent(resourceGPU::setMemoryClock);
+        Optional.ofNullable(resourceGpuDTO.getMemoryClock()).ifPresent(resourceGPU::setMemoryClock);
         Optional.of(resourceGpuDTO.getTdp()).ifPresent(resourceGPU::setTdp);
         Optional.of(resourceGpuDTO.isRayTracingSupport()).ifPresent(resourceGPU::setRayTracingSupport);
         Optional.of(resourceGpuDTO.isDlssSupport()).ifPresent(resourceGPU::setDlssSupport);

@@ -20,4 +20,5 @@ public abstract class Resource {
     private double kWh;
     private String memberEmail;
     private Boolean isAvailable;
+    private String assignedUser;
 }
