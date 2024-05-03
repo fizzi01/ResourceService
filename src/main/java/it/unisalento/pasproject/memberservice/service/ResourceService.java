@@ -157,8 +157,8 @@ public class ResourceService {
         Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resource::setBrand);
         Optional.ofNullable(resourceDTO.getModel()).ifPresent(resource::setModel);
         Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resource::setGreenEnergyType);
-        Optional.ofNullable(resourceDTO.getAvailableHours()).ifPresent(resource::setAvailableHours);
-        Optional.ofNullable(resourceDTO.getKWh()).ifPresent(resource::setKWh);
+        Optional.of(resourceDTO.getAvailableHours()).ifPresent(resource::setAvailableHours);
+        Optional.of(resourceDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
         Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
         Optional.ofNullable(resourceDTO.getAssignedUser()).ifPresent(resource::setAssignedUser);
