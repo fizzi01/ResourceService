@@ -41,11 +41,6 @@ public class ResourceMessageDTO {
     private String assignedUser;
 
     /**
-     * The Thermal Design Power (TDP) of the resource.
-     */
-    private double tdp;
-
-    /**
      * The single core score of the resource.
      */
     private double singleCoreScore;

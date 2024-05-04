@@ -260,11 +260,9 @@ public class ResourceService {
         Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceMessageDTO::setIsAvailable);
         Optional.of(resource.getAssignedUser()).ifPresent(resourceMessageDTO::setAssignedUser);
         if (resource instanceof ResourceCPU) {
-            Optional.of(((ResourceCPU) resource).getTdp()).ifPresent(resourceMessageDTO::setTdp);
             Optional.of(((ResourceCPU) resource).getSingleCoreScore()).ifPresent(resourceMessageDTO::setSingleCoreScore);
             Optional.of(((ResourceCPU) resource).getMulticoreScore()).ifPresent(resourceMessageDTO::setMulticoreScore);
         } else if (resource instanceof ResourceGPU) {
-            Optional.of(((ResourceGPU) resource).getTdp()).ifPresent(resourceMessageDTO::setTdp);
             Optional.of(((ResourceGPU) resource).getOpenclScore()).ifPresent(resourceMessageDTO::setOpenclScore);
             Optional.of(((ResourceGPU) resource).getVulkanScore()).ifPresent(resourceMessageDTO::setVulkanScore);
             Optional.of(((ResourceGPU) resource).getCudaScore()).ifPresent(resourceMessageDTO::setCudaScore);
