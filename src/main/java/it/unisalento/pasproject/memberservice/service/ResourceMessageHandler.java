@@ -5,6 +5,7 @@ import it.unisalento.pasproject.memberservice.domain.Resource;
 import it.unisalento.pasproject.memberservice.dto.MessageDTO;
 import it.unisalento.pasproject.memberservice.dto.ResourceDTO;
 import it.unisalento.pasproject.memberservice.dto.ResourceMessageAssignDTO;
+import it.unisalento.pasproject.memberservice.dto.ResourceMessageDTO;
 import it.unisalento.pasproject.memberservice.repositories.ResourceRepository;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,11 @@ public class ResourceMessageHandler {
     @Value("${rabbitmq.exchange.data.name}")
     private String dataExchange;
 
-    public void sendNewResourceMessage(ResourceDTO message) {
+    public void sendNewResourceMessage(ResourceMessageDTO message) {
         messageProducer.sendMessage(message, newResourceTopic, dataExchange);
     }
 
-    public void sendUpdateResourceMessage(ResourceDTO message) {
+    public void sendUpdateResourceMessage(ResourceMessageDTO message) {
         messageProducer.sendMessage(message, newResourceTopic, dataExchange);
     }
 
@@ -54,14 +55,13 @@ public class ResourceMessageHandler {
     }
 
     @RabbitListener(queues = "${rabbitmq.queue.resourceusage.name}")
-    public MessageDTO receiveResourceUsageMessage(ResourceDTO message) {
+    public MessageDTO receiveResourceUsageMessage(ResourceMessageDTO message) {
         Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
             return new MessageDTO("Resource not found", 404);
         }
 
-        //TODO: Inserire sulla risorsa presa la modifica di isAvailable
         Resource retResource = resource.get();
 
         Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);

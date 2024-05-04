@@ -93,14 +93,14 @@ public class ResourceController {
             ResourceCPU resourceCPU = resourceService.getResourceCPU((ResourceCpuDTO) newResource);
             resourceCPU = resourceRepository.save(resourceCPU);
 
-            resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceCpuDTO(resourceCPU));
+            resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceCPU));
 
             return ResponseEntity.ok(resourceService.getResourceCpuDTO(resourceCPU));
         } else if (newResource instanceof ResourceGpuDTO) {
             ResourceGPU resourceGPU = resourceService.getResourceGPU((ResourceGpuDTO) newResource);
             resourceGPU = resourceRepository.save(resourceGPU);
 
-            resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceGpuDTO(resourceGPU));
+            resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceGPU));
 
             return ResponseEntity.ok(resourceService.getResourceGpuDTO(resourceGPU));
         } else {
@@ -127,7 +127,7 @@ public class ResourceController {
 
             retResourceCPU = resourceRepository.save(retResourceCPU);
 
-            //resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceCpuDTO(retResourceCPU));
+            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResourceCPU));
 
             return resourceService.getResourceCpuDTO(retResourceCPU);
         } else if (retResource instanceof ResourceGPU retResourceGPU) {
@@ -136,7 +136,7 @@ public class ResourceController {
 
             retResourceGPU = resourceRepository.save(retResourceGPU);
 
-            //resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceGpuDTO(retResourceGPU));
+            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResourceGPU));
 
             return resourceService.getResourceGpuDTO(retResourceGPU);
         } else {
@@ -163,10 +163,10 @@ public class ResourceController {
         retResource = resourceRepository.save(retResource);
 
         if (retResource instanceof ResourceCPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceCpuDTO((ResourceCPU) retResource));
+            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
             return resourceService.getResourceCpuDTO((ResourceCPU) retResource);
         } else if (retResource instanceof ResourceGPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceGpuDTO((ResourceGPU) retResource));
+            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
             return resourceService.getResourceGpuDTO((ResourceGPU) retResource);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
@@ -188,11 +188,10 @@ public class ResourceController {
         retResource = resourceRepository.save(retResource);
 
         if (retResource instanceof ResourceCPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceCpuDTO((ResourceCPU) retResource));
+            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
             return resourceService.getResourceCpuDTO((ResourceCPU) retResource);
         } else if (retResource instanceof ResourceGPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceGpuDTO((ResourceGPU) retResource));
-
+            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
             return resourceService.getResourceGpuDTO((ResourceGPU) retResource);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
