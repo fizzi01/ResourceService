@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * RabbitMQConfig is a configuration class that sets up the RabbitMQ message broker.
+ * It defines the queues, exchanges, and bindings used in the application, as well as the message converter and AMQP template.
+ */
 @Configuration
 public class RabbitMQConfig {
-
 
     // ------  SECURITY  ------
 
@@ -25,16 +28,31 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing.security.key}")
     private String securityRequestRoutingKey;
 
+    /**
+     * Defines the security response queue.
+     *
+     * @return a new Queue instance
+     */
     @Bean
     public Queue securityResponseQueue() {
         return new Queue(securityResponseQueue);
     }
 
+    /**
+     * Defines the security exchange.
+     *
+     * @return a new TopicExchange instance
+     */
     @Bean
     public TopicExchange securityExchange() {
         return new TopicExchange(securityExchange);
     }
 
+    /**
+     * Defines the binding between the security response queue and the security exchange.
+     *
+     * @return a new Binding instance
+     */
     @Bean
     public Binding securityBinding() {
         return BindingBuilder
@@ -70,26 +88,51 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.exchange.data.name}")
     private String resourceDataExchange;
 
+    /**
+     * Defines the new resource queue.
+     *
+     * @return a new Queue instance
+     */
     @Bean
     public Queue newResourceQueue() {
         return new Queue(newResourceQueue);
     }
 
+    /**
+     * Defines the resource assignment queue.
+     *
+     * @return a new Queue instance
+     */
     @Bean
     public Queue resourceAssignmentQueue() {
         return new Queue(resourceAssignmentQueue);
     }
 
+    /**
+     * Defines the resource usage queue.
+     *
+     * @return a new Queue instance
+     */
     @Bean
     public Queue resourceUsageQueue() {
         return new Queue(resourceUsageQueue);
     }
 
+    /**
+     * Defines the resource data exchange.
+     *
+     * @return a new TopicExchange instance
+     */
     @Bean
     public TopicExchange resourceDataExchange() {
         return new TopicExchange(resourceDataExchange);
     }
 
+    /**
+     * Defines the binding between the new resource queue and the resource data exchange.
+     *
+     * @return a new Binding instance
+     */
     @Bean
     public Binding newResourceBinding() {
         return BindingBuilder
@@ -98,6 +141,11 @@ public class RabbitMQConfig {
                 .with(newResourceTopic);
     }
 
+    /**
+     * Defines the binding between the resource assignment queue and the resource data exchange.
+     *
+     * @return a new Binding instance
+     */
     @Bean
     public Binding resourceAssignmentBinding() {
         return BindingBuilder
@@ -106,6 +154,11 @@ public class RabbitMQConfig {
                 .with(resourceAssignmentTopic);
     }
 
+    /**
+     * Defines the binding between the resource usage queue and the resource data exchange.
+     *
+     * @return a new Binding instance
+     */
     @Bean
     public Binding resourceUsageBinding() {
         return BindingBuilder

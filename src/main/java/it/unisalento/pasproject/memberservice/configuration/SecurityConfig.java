@@ -12,6 +12,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * SecurityConfig is a configuration class that sets up the security settings for the application.
+ * It enables method security and configures the security filter chain.
+ */
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
@@ -44,11 +48,23 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Creates an AuthenticationManager bean.
+     *
+     * @param authenticationConfiguration The AuthenticationConfiguration object to be used.
+     * @return An AuthenticationManager object.
+     * @throws Exception If an error occurs during the creation process.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    /**
+     * Creates a JwtAuthenticationFilter bean.
+     *
+     * @return A JwtAuthenticationFilter object.
+     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();

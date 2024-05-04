@@ -17,6 +17,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * The ResourceService class provides methods for managing resources.
+ * It includes methods for getting and updating resources, and converting resources to and from DTOs.
+ * It uses a MongoTemplate for performing MongoDB operations.
+ */
 @Service
 public class ResourceService {
     private final MongoTemplate mongoTemplate;
@@ -27,6 +32,10 @@ public class ResourceService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceService.class);
 
+    /**
+     * Constructor for the ResourceService.
+     * @param mongoTemplate The MongoTemplate to be used for MongoDB operations.
+     */
     @Autowired
     public ResourceService(MongoTemplate mongoTemplate) {
         this.resourceFactory = new ResourceFactory();
@@ -34,6 +43,11 @@ public class ResourceService {
         this.mongoTemplate = mongoTemplate;
     }
 
+    /**
+     * Gets a ResourceCPU from a ResourceCpuDTO.
+     * @param resourceCpuDTO The ResourceCpuDTO to convert.
+     * @return The resulting ResourceCPU.
+     */
     public ResourceCPU getResourceCPU(ResourceCpuDTO resourceCpuDTO) {
         ResourceCPU resourceCPU = (ResourceCPU) resourceFactory.getResourceType(ResourceFactory.ResourceType.CPU);
 
@@ -62,6 +76,11 @@ public class ResourceService {
         return resourceCPU;
     }
 
+    /**
+     * Gets a ResourceGPU from a ResourceGpuDTO.
+     * @param resourceGpuDTO The ResourceGpuDTO to convert.
+     * @return The resulting ResourceGPU.
+     */
     public ResourceGPU getResourceGPU(ResourceGpuDTO resourceGpuDTO) {
         ResourceGPU resourceGPU = (ResourceGPU) resourceFactory.getResourceType(ResourceFactory.ResourceType.GPU);
 
@@ -91,6 +110,11 @@ public class ResourceService {
         return resourceGPU;
     }
 
+    /**
+     * Gets a ResourceCpuDTO from a ResourceCPU.
+     * @param resourceCPU The ResourceCPU to convert.
+     * @return The resulting ResourceCpuDTO.
+     */
     public ResourceCpuDTO getResourceCpuDTO(ResourceCPU resourceCPU) {
         ResourceCpuDTO dto = (ResourceCpuDTO) resourceDTOFactory.getResourceDTOType(ResourceDTOFactory.ResourceDTOType.CPU);
 
@@ -120,6 +144,11 @@ public class ResourceService {
         return dto;
     }
 
+    /**
+     * Gets a ResourceGpuDTO from a ResourceGPU.
+     * @param resourceGPU The ResourceGPU to convert.
+     * @return The resulting ResourceGpuDTO.
+     */
     public ResourceGpuDTO getResourceGpuDTO(ResourceGPU resourceGPU) {
         ResourceGpuDTO dto = (ResourceGpuDTO) resourceDTOFactory.getResourceDTOType(ResourceDTOFactory.ResourceDTOType.GPU);
 
@@ -150,6 +179,12 @@ public class ResourceService {
         return dto;
     }
 
+    /**
+     * Updates a Resource with data from a ResourceDTO.
+     * @param resource The Resource to update.
+     * @param resourceDTO The ResourceDTO to get the data from.
+     * @return The updated Resource.
+     */
     public Resource updateResource(Resource resource, ResourceDTO resourceDTO) {
         Optional.ofNullable(resourceDTO.getName()).ifPresent(resource::setName);
         Optional.ofNullable(resourceDTO.getType()).ifPresent(resource::setType);
@@ -165,6 +200,12 @@ public class ResourceService {
         return resource;
     }
 
+    /**
+     * Updates a ResourceCPU with data from a ResourceCpuDTO.
+     * @param resourceCPU The ResourceCPU to update.
+     * @param resourceCpuDTO The ResourceCpuDTO to get the data from.
+     * @return The updated ResourceCPU.
+     */
     public ResourceCPU updateResourceCPU(ResourceCPU resourceCPU, ResourceCpuDTO resourceCpuDTO) {
         Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
         Optional.of(resourceCpuDTO.getCores()).ifPresent(resourceCPU::setCores);
@@ -181,6 +222,12 @@ public class ResourceService {
         return resourceCPU;
     }
 
+    /**
+     * Updates a ResourceGPU with data from a ResourceGpuDTO.
+     * @param resourceGPU The ResourceGPU to update.
+     * @param resourceGpuDTO The ResourceGpuDTO to get the data from.
+     * @return The updated ResourceGPU.
+     */
     public ResourceGPU updateResourceGPU(ResourceGPU resourceGPU, ResourceGpuDTO resourceGpuDTO) {
         Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
         Optional.ofNullable(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
@@ -198,6 +245,11 @@ public class ResourceService {
         return resourceGPU;
     }
 
+    /**
+     * Gets a ResourceMessageDTO from a Resource.
+     * @param resource The Resource to convert.
+     * @return The resulting ResourceMessageDTO.
+     */
     public ResourceMessageDTO getResourceMessageDTO(Resource resource) {
         ResourceMessageDTO resourceMessageDTO = new ResourceMessageDTO();
 
@@ -221,6 +273,17 @@ public class ResourceService {
         return resourceMessageDTO;
     }
 
+    /**
+     * Finds resources based on the provided parameters.
+     * @param name The name of the resource.
+     * @param type The type of the resource.
+     * @param greenEnergyType The green energy type of the resource.
+     * @param availableHours The available hours of the resource.
+     * @param kWh The kWh of the resource.
+     * @param memberMail The member mail of the resource.
+     * @param isAvailable The availability of the resource.
+     * @return A list of resources that match the provided parameters.
+     */
     public List<Resource> findResources(String name, String type, String greenEnergyType, Integer availableHours, Double kWh, String memberMail, Boolean isAvailable) {
         Query query = new Query();
 

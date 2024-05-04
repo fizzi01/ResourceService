@@ -4,18 +4,21 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 /**
- * Service class for managing RabbitMQ operations.
+ * The RabbitMQService class provides methods for managing RabbitMQ operations.
+ * It includes methods for binding and unbinding a queue to a topic in RabbitMQ.
+ * It uses a RabbitTemplate for performing RabbitMQ operations.
  */
 @Service
 public class RabbitMQService {
 
+    /**
+     * The RabbitTemplate used for RabbitMQ operations.
+     */
     private final RabbitTemplate rabbitTemplate;
 
     /**
      * Constructor for the RabbitMQService.
-     *
      * @param rabbitTemplate The RabbitTemplate to be used for RabbitMQ operations.
      */
     @Autowired
@@ -25,7 +28,6 @@ public class RabbitMQService {
 
     /**
      * Binds a queue to a topic in RabbitMQ.
-     *
      * @param queueName The name of the queue to bind.
      * @param topicName The name of the topic to bind the queue to.
      * @param routingKey The routing key to use for the binding.
@@ -41,7 +43,6 @@ public class RabbitMQService {
 
     /**
      * Unbinds a queue from a topic in RabbitMQ.
-     *
      * @param queueName The name of the queue to unbind.
      * @param topicName The name of the topic to unbind the queue from.
      * @param routingKey The routing key that was used for the binding.

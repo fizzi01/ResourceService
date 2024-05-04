@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * ResourceController is a REST controller that provides endpoints for managing resources.
+ * It uses the ResourceService for business logic and the ResourceRepository for data access.
+ */
 @RestController
 @RequestMapping("/api/resource")
 public class ResourceController {
@@ -30,6 +34,13 @@ public class ResourceController {
 
     private final ResourceMessageHandler resourceMessageHandler;
 
+    /**
+     * Constructs a new ResourceController with the given ResourceRepository, ResourceService, and ResourceMessageHandler.
+     *
+     * @param resourceRepository the repository to use for data access
+     * @param resourceService the service to use for business logic
+     * @param resourceMessageHandler the message handler to use for sending resource messages
+     */
     @Autowired
     public ResourceController(ResourceRepository resourceRepository, ResourceService resourceService, ResourceMessageHandler resourceMessageHandler) {
         this.resourceRepository = resourceRepository;
@@ -37,6 +48,11 @@ public class ResourceController {
         this.resourceMessageHandler = resourceMessageHandler;
     }
 
+    /**
+     * Returns all resources.
+     *
+     * @return a ResourceListDTO containing all resources
+     */
     @GetMapping(value="/find/all")
     @Secured({"MEMBRO"})
     public ResourceListDTO getAllResources() {
@@ -57,6 +73,19 @@ public class ResourceController {
         return resourceListDTO;
     }
 
+    /**
+     * Returns resources that match the given filter criteria.
+     *
+     * @param type the type of the resources to return
+     * @param name the name of the resources to return
+     * @param greenEnergyType the green energy type of the resources to return
+     * @param availableHours the available hours of the resources to return
+     * @param kWh the kWh of the resources to return
+     * @param memberMail the member mail of the resources to return
+     * @param isAvailable whether the resources to return should be available
+     * @return a ResourceListDTO containing the matching resources
+     * @throws ResourceNotFoundException if no resources match the given criteria
+     */
     @GetMapping("/find")
     @Secured("MEMBRO")
     public ResourceListDTO getByFilter(@RequestParam() String type,
@@ -86,6 +115,12 @@ public class ResourceController {
         return resourceListDTO;
     }
 
+    /**
+     * Inserts a new resource.
+     *
+     * @param newResource the resource to insert
+     * @return a ResponseEntity containing the inserted resource
+     */
     @PostMapping(value="/insertResource", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"MEMBRO"})
     public ResponseEntity<?> insertResource(@RequestBody ResourceDTO newResource) {
@@ -108,6 +143,13 @@ public class ResourceController {
         }
     }
 
+    /**
+     * Updates a resource.
+     *
+     * @param resourceToUpdate the resource to update
+     * @return the updated resource
+     * @throws ResourceNotFoundException if the resource to update does not exist
+     */
     @PutMapping(value="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"MEMBRO"})
     public ResourceDTO updateResource(@RequestBody ResourceDTO resourceToUpdate) throws ResourceNotFoundException {
@@ -144,6 +186,13 @@ public class ResourceController {
         }
     }
 
+    /**
+     * Makes a resource available.
+     *
+     * @param id the id of the resource to make available
+     * @return the updated resource
+     * @throws ResourceNotFoundException if the resource to make available does not exist
+     */
     @PutMapping(value="/available/{id}")
     @Secured({"MEMBRO"})
     public ResourceDTO makeAvailable(@PathVariable String id) throws ResourceNotFoundException {
@@ -173,6 +222,13 @@ public class ResourceController {
         }
     }
 
+    /**
+     * Makes a resource unavailable.
+     *
+     * @param id the id of the resource to make unavailable
+     * @return the updated resource
+     * @throws ResourceNotFoundException if the resource to make unavailable does not exist
+     */
     @PutMapping(value="/unavailable/{id}")
     @Secured({"MEMBRO"})
     public ResourceDTO makeUnavailable(@PathVariable String id) throws ResourceNotFoundException {
