@@ -1,7 +1,10 @@
 package it.unisalento.pasproject.memberservice.dto;
 
+import it.unisalento.pasproject.memberservice.domain.Availability;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * The ResourceMessageDTO class is a data transfer object that represents a resource message.
@@ -18,7 +21,7 @@ public class ResourceMessageDTO {
     /**
      * The number of hours the resource is available.
      */
-    private int availableHours;
+    private List<Availability> availability;
 
     /**
      * The energy consumption of the resource in kilowatt-hours (kWh).

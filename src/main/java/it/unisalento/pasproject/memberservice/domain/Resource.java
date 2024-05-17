@@ -5,9 +5,11 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 /**
  * The Resource class is an abstract class that represents a generic resource.
- * It is a MongoDB document and it is used as a base class for specific types of resources.
+ * It is a MongoDB document, and it is used as a base class for specific types of resources.
  * It includes common properties such as id, name, type, brand, model, greenEnergyType, availableHours, kWh, memberEmail, isAvailable, and assignedUser.
  */
 @Getter
@@ -48,7 +50,7 @@ public abstract class Resource {
     /**
      * The number of hours the resource is available.
      */
-    private int availableHours;
+    private List<Availability> availability;
 
     /**
      * The kilowatt-hours (kWh) the resource uses.

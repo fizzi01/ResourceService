@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class ResourceService {
         Optional.ofNullable(resourceCpuDTO.getBrand()).ifPresent(resourceCPU::setBrand);
         Optional.ofNullable(resourceCpuDTO.getModel()).ifPresent(resourceCPU::setModel);
         Optional.ofNullable(resourceCpuDTO.getGreenEnergyType()).ifPresent(resourceCPU::setGreenEnergyType);
-        Optional.of(resourceCpuDTO.getAvailableHours()).ifPresent(resourceCPU::setAvailableHours);
+        Optional.ofNullable(resourceCpuDTO.getAvailability()).ifPresent(resourceCPU::setAvailability);
         Optional.of(resourceCpuDTO.getKWh()).ifPresent(resourceCPU::setKWh);
         Optional.ofNullable(resourceCpuDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
         Optional.ofNullable(resourceCpuDTO.getIsAvailable()).ifPresent(resourceCPU::setIsAvailable);
@@ -89,7 +90,7 @@ public class ResourceService {
         Optional.ofNullable(resourceGpuDTO.getBrand()).ifPresent(resourceGPU::setBrand);
         Optional.ofNullable(resourceGpuDTO.getModel()).ifPresent(resourceGPU::setModel);
         Optional.ofNullable(resourceGpuDTO.getGreenEnergyType()).ifPresent(resourceGPU::setGreenEnergyType);
-        Optional.of(resourceGpuDTO.getAvailableHours()).ifPresent(resourceGPU::setAvailableHours);
+        Optional.ofNullable(resourceGpuDTO.getAvailability()).ifPresent(resourceGPU::setAvailability);
         Optional.of(resourceGpuDTO.getKWh()).ifPresent(resourceGPU::setKWh);
         Optional.ofNullable(resourceGpuDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
         Optional.ofNullable(resourceGpuDTO.getIsAvailable()).ifPresent(resourceGPU::setIsAvailable);
@@ -124,7 +125,7 @@ public class ResourceService {
         Optional.ofNullable(resourceCPU.getBrand()).ifPresent(dto::setBrand);
         Optional.ofNullable(resourceCPU.getModel()).ifPresent(dto::setModel);
         Optional.ofNullable(resourceCPU.getGreenEnergyType()).ifPresent(dto::setGreenEnergyType);
-        Optional.of(resourceCPU.getAvailableHours()).ifPresent(dto::setAvailableHours);
+        Optional.ofNullable(resourceCPU.getAvailability()).ifPresent(dto::setAvailability);
         Optional.of(resourceCPU.getKWh()).ifPresent(dto::setKWh);
         Optional.ofNullable(resourceCPU.getMemberEmail()).ifPresent(dto::setMemberEmail);
         Optional.ofNullable(resourceCPU.getIsAvailable()).ifPresent(dto::setIsAvailable);
@@ -158,7 +159,7 @@ public class ResourceService {
         Optional.ofNullable(resourceGPU.getBrand()).ifPresent(dto::setBrand);
         Optional.ofNullable(resourceGPU.getModel()).ifPresent(dto::setModel);
         Optional.ofNullable(resourceGPU.getGreenEnergyType()).ifPresent(dto::setGreenEnergyType);
-        Optional.of(resourceGPU.getAvailableHours()).ifPresent(dto::setAvailableHours);
+        Optional.ofNullable(resourceGPU.getAvailability()).ifPresent(dto::setAvailability);
         Optional.of(resourceGPU.getKWh()).ifPresent(dto::setKWh);
         Optional.ofNullable(resourceGPU.getMemberEmail()).ifPresent(dto::setMemberEmail);
         Optional.ofNullable(resourceGPU.getIsAvailable()).ifPresent(dto::setIsAvailable);
@@ -191,7 +192,7 @@ public class ResourceService {
         Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resource::setBrand);
         Optional.ofNullable(resourceDTO.getModel()).ifPresent(resource::setModel);
         Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resource::setGreenEnergyType);
-        Optional.of(resourceDTO.getAvailableHours()).ifPresent(resource::setAvailableHours);
+        Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
         Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
@@ -254,11 +255,11 @@ public class ResourceService {
         ResourceMessageDTO resourceMessageDTO = new ResourceMessageDTO();
 
         Optional.ofNullable(resource.getId()).ifPresent(resourceMessageDTO::setId);
-        Optional.of(resource.getAvailableHours()).ifPresent(resourceMessageDTO::setAvailableHours);
+        Optional.ofNullable(resource.getAvailability()).ifPresent(resourceMessageDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceMessageDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceMessageDTO::setMemberEmail);
         Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceMessageDTO::setIsAvailable);
-        Optional.of(resource.getAssignedUser()).ifPresent(resourceMessageDTO::setAssignedUser);
+        Optional.ofNullable(resource.getAssignedUser()).ifPresent(resourceMessageDTO::setAssignedUser);
         if (resource instanceof ResourceCPU) {
             Optional.of(((ResourceCPU) resource).getSingleCoreScore()).ifPresent(resourceMessageDTO::setSingleCoreScore);
             Optional.of(((ResourceCPU) resource).getMulticoreScore()).ifPresent(resourceMessageDTO::setMulticoreScore);
@@ -276,13 +277,14 @@ public class ResourceService {
      * @param name The name of the resource.
      * @param type The type of the resource.
      * @param greenEnergyType The green energy type of the resource.
-     * @param availableHours The available hours of the resource.
+     * @param from The start date of the availability of the resource.
+     * @param to The end date of the availability of the resource.
      * @param kWh The kWh of the resource.
      * @param memberMail The member mail of the resource.
      * @param isAvailable The availability of the resource.
      * @return A list of resources that match the provided parameters.
      */
-    public List<Resource> findResources(String name, String type, String greenEnergyType, Integer availableHours, Double kWh, String memberMail, Boolean isAvailable) {
+    public List<Resource> findResources(String name, String type, String greenEnergyType, LocalDateTime from, LocalDateTime to, Double kWh, String memberMail, Boolean isAvailable) {
         Query query = new Query();
 
         query.addCriteria(Criteria.where("type").is(type));
@@ -298,8 +300,11 @@ public class ResourceService {
         if (greenEnergyType != null) {
             query.addCriteria(Criteria.where("greenEnergyType").is(greenEnergyType));
         }
-        if (availableHours != null) {
-            query.addCriteria(Criteria.where("availableHours").is(availableHours));
+        if (from != null) {
+            query.addCriteria(Criteria.where("availability.availableFrom").gte(from));
+        }
+        if (to != null) {
+            query.addCriteria(Criteria.where("availability.availableUntil").lte(to));
         }
         if (kWh != null) {
             query.addCriteria(Criteria.where("kWh").lte(kWh));

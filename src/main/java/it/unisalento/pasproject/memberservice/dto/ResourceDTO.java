@@ -2,8 +2,13 @@ package it.unisalento.pasproject.memberservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import it.unisalento.pasproject.memberservice.domain.Availability;
+import it.unisalento.pasproject.memberservice.service.AvailabilityDeserializer;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * The ResourceDTO class is an abstract data transfer object that represents a resource.
@@ -57,7 +62,8 @@ public abstract class ResourceDTO {
     /**
      * The number of hours the resource is available.
      */
-    private int availableHours;
+    @JsonDeserialize(using = AvailabilityDeserializer.class)
+    private List<Availability> availability;
 
     /**
      * The energy consumption of the resource in kilowatt-hours (kWh).

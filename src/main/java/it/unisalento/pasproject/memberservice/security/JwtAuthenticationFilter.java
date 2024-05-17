@@ -1,6 +1,7 @@
 package it.unisalento.pasproject.memberservice.security;
 
 
+import it.unisalento.pasproject.memberservice.exceptions.UserNotAuthorized;
 import it.unisalento.pasproject.memberservice.service.UserCheckService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -46,16 +47,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+            throws ServletException, IOException, UserNotAuthorized {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            username = jwtUtilities.extractUsername(jwt);
+        try {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                jwt = authorizationHeader.substring(7);
+                username = jwtUtilities.extractUsername(jwt);
+            }
+        } catch (Exception e) {
+            throw new UserNotAuthorized("User not authorized");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -72,6 +77,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            } else {
+                throw new UserNotAuthorized("User not authorized");
             }
         }
 

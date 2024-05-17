@@ -3,6 +3,7 @@ package it.unisalento.pasproject.memberservice.service;
 
 import it.unisalento.pasproject.memberservice.business.io.exchanger.MessageExchangeStrategy;
 import it.unisalento.pasproject.memberservice.business.io.exchanger.MessageExchanger;
+import it.unisalento.pasproject.memberservice.exceptions.UserNotAuthorized;
 import it.unisalento.pasproject.memberservice.security.UserDetailsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class UserCheckService {
         UserDetailsDTO user = messageExchanger.exchangeMessage(email,securityRequestRoutingKey,securityExchange,UserDetailsDTO.class);
 
         if(user == null) {
-            throw new UsernameNotFoundException(email);
+            throw new UserNotAuthorized("User not found with email: " + email);
         }
 
         LOGGER.info(String.format("User %s found with role: %s and enabled %s", user.getEmail(), user.getRole(), user.getEnabled()));

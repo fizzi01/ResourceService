@@ -6,6 +6,8 @@ import it.unisalento.pasproject.memberservice.dto.MessageDTO;
 import it.unisalento.pasproject.memberservice.dto.ResourceMessageAssignDTO;
 import it.unisalento.pasproject.memberservice.dto.ResourceMessageDTO;
 import it.unisalento.pasproject.memberservice.repositories.ResourceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,14 @@ public class ResourceMessageHandler {
     private final ResourceRepository resourceRepository;
     private final MessageProducer messageProducer;
 
+    @Value("${rabbitmq.routing.newresource.key}")
+    private String newResourceTopic;
+
+    @Value("${rabbitmq.exchange.data.name}")
+    private String dataExchange;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMessageHandler.class);
+
     /**
      * Constructor for the ResourceMessageHandler.
      * @param resourceRepository The ResourceRepository to be used for accessing resource data.
@@ -33,12 +43,6 @@ public class ResourceMessageHandler {
         this.resourceRepository = resourceRepository;
         this.messageProducer = messageProducer;
     }
-
-    @Value("${rabbitmq.routing.newresource.key}")
-    private String newResourceTopic;
-
-    @Value("${rabbitmq.exchange.data.name}")
-    private String dataExchange;
 
     /**
      * Sends a new resource message.

@@ -11,12 +11,15 @@ import it.unisalento.pasproject.memberservice.exceptions.ResourceNotFoundExcepti
 import it.unisalento.pasproject.memberservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.memberservice.service.ResourceMessageHandler;
 import it.unisalento.pasproject.memberservice.service.ResourceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +36,8 @@ public class ResourceController {
     private final ResourceService resourceService;
 
     private final ResourceMessageHandler resourceMessageHandler;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
     /**
      * Constructs a new ResourceController with the given ResourceRepository, ResourceService, and ResourceMessageHandler.
@@ -79,7 +84,8 @@ public class ResourceController {
      * @param type the type of the resources to return
      * @param name the name of the resources to return
      * @param greenEnergyType the green energy type of the resources to return
-     * @param availableHours the available hours of the resources to return
+     * @param from the start date of the resources to return
+     * @param to the end date of the resources to return
      * @param kWh the kWh of the resources to return
      * @param memberMail the member mail of the resources to return
      * @param isAvailable whether the resources to return should be available
@@ -91,7 +97,8 @@ public class ResourceController {
     public ResourceListDTO getByFilter(@RequestParam() String type,
                                        @RequestParam(required = false) String name,
                                        @RequestParam(required = false) String greenEnergyType,
-                                       @RequestParam(required = false) Integer availableHours,
+                                       @RequestParam(required = false) LocalDateTime from,
+                                       @RequestParam(required = false) LocalDateTime to,
                                        @RequestParam(required = false) Double kWh,
                                        @RequestParam(required = false) String memberMail,
                                        @RequestParam(required = false) Boolean isAvailable) throws ResourceNotFoundException {
@@ -99,10 +106,10 @@ public class ResourceController {
         List<ResourceDTO> list = new ArrayList<>();
         resourceListDTO.setResourcesList(list);
 
-        List<Resource> resources = resourceService.findResources(name, type, greenEnergyType, availableHours, kWh, memberMail, isAvailable);
+        List<Resource> resources = resourceService.findResources(name, type, greenEnergyType, from, to, kWh, memberMail, isAvailable);
 
         if (resources.isEmpty())
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("No resources found with the given criteria.");
 
         for (Resource resource : resources){
             if (resource instanceof ResourceCPU) {
@@ -123,21 +130,22 @@ public class ResourceController {
      */
     @PostMapping(value="/insertResource", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"MEMBRO"})
-    public ResponseEntity<?> insertResource(@RequestBody ResourceDTO newResource) {
+    public ResourceDTO insertResource(@RequestBody ResourceDTO newResource) {
+        LOGGER.info("New resource arrived: " + newResource.getAvailability());
         if (newResource instanceof ResourceCpuDTO) {
             ResourceCPU resourceCPU = resourceService.getResourceCPU((ResourceCpuDTO) newResource);
             resourceCPU = resourceRepository.save(resourceCPU);
 
             resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceCPU));
 
-            return ResponseEntity.ok(resourceService.getResourceCpuDTO(resourceCPU));
+            return resourceService.getResourceCpuDTO(resourceCPU);
         } else if (newResource instanceof ResourceGpuDTO) {
             ResourceGPU resourceGPU = resourceService.getResourceGPU((ResourceGpuDTO) newResource);
             resourceGPU = resourceRepository.save(resourceGPU);
 
             resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceGPU));
 
-            return ResponseEntity.ok(resourceService.getResourceGpuDTO(resourceGPU));
+            return resourceService.getResourceGpuDTO(resourceGPU);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + newResource.getClass());
         }
@@ -156,7 +164,7 @@ public class ResourceController {
         Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
 
         if(resource.isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Resource not found with email: " + resourceToUpdate.getId() + ".");
         }
 
         Resource retResource = resource.get();
@@ -198,13 +206,13 @@ public class ResourceController {
     public ResourceDTO makeAvailable(@PathVariable String id) throws ResourceNotFoundException {
 
         if (resourceRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
         }
 
         Optional<Resource> resource = resourceRepository.findById(id);
 
         if(resource.isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
         }
 
         Resource retResource = resource.get();
@@ -236,7 +244,7 @@ public class ResourceController {
         Optional<Resource> resource = resourceRepository.findById(id);
 
         if(resource.isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
         }
 
         Resource retResource = resource.get();
