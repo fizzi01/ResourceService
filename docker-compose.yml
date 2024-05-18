@@ -23,9 +23,9 @@ services:
     ports:
       - "${MONGO_PORT}:27017"
     volumes:
-      - mongo_memberservice:/etc/mongo
-      - mongo_memberservice_data:/data/db
-      - mongo_memberservice_config:/data/configdb
+      - mongo_member:/etc/mongo
+      - mongo_member_data:/data/db
+      - mongo_member_config:/data/configdb
     networks:
       - greenspot-net
 
@@ -34,6 +34,6 @@ networks:
     name: greenspot_net
 
 volumes:
-    mongo_memberservice:
-    mongo_memberservice_data:
-    mongo_memberservice_config:
+    mongo_member:
+    mongo_member_data:
+    mongo_member_config:
