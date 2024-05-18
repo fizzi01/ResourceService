@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static it.unisalento.pasproject.memberservice.security.SecurityConstants.ROLE_MEMBRO;
+
 /**
  * ResourceController is a REST controller that provides endpoints for managing resources.
  * It uses the ResourceService for business logic and the ResourceRepository for data access.
@@ -59,7 +61,7 @@ public class ResourceController {
      * @return a ResourceListDTO containing all resources
      */
     @GetMapping(value="/find/all")
-    @Secured({"MEMBRO"})
+    @Secured({ROLE_MEMBRO})
     public ResourceListDTO getAllResources() {
         ResourceListDTO resourceListDTO = new ResourceListDTO();
         List<ResourceDTO> list = new ArrayList<>();
@@ -93,7 +95,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if no resources match the given criteria
      */
     @GetMapping("/find")
-    @Secured("MEMBRO")
+    @Secured(ROLE_MEMBRO)
     public ResourceListDTO getByFilter(@RequestParam() String type,
                                        @RequestParam(required = false) String name,
                                        @RequestParam(required = false) String greenEnergyType,
@@ -129,7 +131,7 @@ public class ResourceController {
      * @return a ResponseEntity containing the inserted resource
      */
     @PostMapping(value="/insertResource", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({"MEMBRO"})
+    @Secured({ROLE_MEMBRO})
     public ResourceDTO insertResource(@RequestBody ResourceDTO newResource) {
         LOGGER.info("New resource arrived: " + newResource.getAvailability());
         if (newResource instanceof ResourceCpuDTO) {
@@ -159,7 +161,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if the resource to update does not exist
      */
     @PutMapping(value="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({"MEMBRO"})
+    @Secured({ROLE_MEMBRO})
     public ResourceDTO updateResource(@RequestBody ResourceDTO resourceToUpdate) throws ResourceNotFoundException {
         Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
 
@@ -202,7 +204,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if the resource to make available does not exist
      */
     @PutMapping(value="/available/{id}")
-    @Secured({"MEMBRO"})
+    @Secured({ROLE_MEMBRO})
     public ResourceDTO makeAvailable(@PathVariable String id) throws ResourceNotFoundException {
 
         if (resourceRepository.findById(id).isEmpty()) {
@@ -238,7 +240,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if the resource to make unavailable does not exist
      */
     @PutMapping(value="/unavailable/{id}")
-    @Secured({"MEMBRO"})
+    @Secured({ROLE_MEMBRO})
     public ResourceDTO makeUnavailable(@PathVariable String id) throws ResourceNotFoundException {
 
         Optional<Resource> resource = resourceRepository.findById(id);

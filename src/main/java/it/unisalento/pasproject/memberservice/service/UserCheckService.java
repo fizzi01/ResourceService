@@ -4,14 +4,17 @@ package it.unisalento.pasproject.memberservice.service;
 import it.unisalento.pasproject.memberservice.business.io.exchanger.MessageExchangeStrategy;
 import it.unisalento.pasproject.memberservice.business.io.exchanger.MessageExchanger;
 import it.unisalento.pasproject.memberservice.exceptions.UserNotAuthorized;
-import it.unisalento.pasproject.memberservice.security.UserDetailsDTO;
+import it.unisalento.pasproject.memberservice.dto.UserDetailsDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import static it.unisalento.pasproject.memberservice.security.SecurityConstants.ROLE_ADMIN;
 
 /**
  * The UserCheckService class provides methods for checking user details.
@@ -21,23 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserCheckService {
     /**
-     * The role of the service.
-     */
-    @Value("${service.role.name}")
-    public String ROLE;
-
-    /**
      * The MessageExchanger used for exchanging messages.
      */
-    @Autowired
-    private MessageExchanger messageExchanger;
-
-    /**
-     * The MessageExchangeStrategy used for defining the message exchange strategy.
-     */
-    @Autowired
-    @Qualifier("RabbitMQExchange")
-    private MessageExchangeStrategy messageExchangeStrategy;
+    private final MessageExchanger messageExchanger;
 
     /**
      * The name of the security exchange.
@@ -56,6 +45,12 @@ public class UserCheckService {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(UserCheckService.class);
 
+    @Autowired
+    public UserCheckService(MessageExchanger messageExchanger, @Qualifier("RabbitMQExchange") MessageExchangeStrategy messageExchangeStrategy) {
+        this.messageExchanger = messageExchanger;
+        this.messageExchanger.setStrategy(messageExchangeStrategy);
+    }
+
     /**
      * Loads user details by username.
      * @param email The email of the user.
@@ -63,8 +58,6 @@ public class UserCheckService {
      * @throws UsernameNotFoundException if the user is not found.
      */
     public UserDetailsDTO loadUserByUsername(String email) throws UsernameNotFoundException {
-        messageExchanger.setStrategy(messageExchangeStrategy);
-
         // MQTT call to CQRS to get user details
         UserDetailsDTO user = messageExchanger.exchangeMessage(email,securityRequestRoutingKey,securityExchange,UserDetailsDTO.class);
 
@@ -78,20 +71,29 @@ public class UserCheckService {
     }
 
     /**
-     * Checks if a role matches the service role.
-     * @param role The role to check.
-     * @return True if the role matches the service role, false otherwise.
-     */
-    public Boolean roleCheck(String role) {
-        return role.equals(ROLE);
-    }
-
-    /**
      * Checks if a user is enabled.
      * @param enable The enabled status of the user.
      * @return The enabled status of the user.
      */
     public Boolean isEnable(Boolean enable) {
         return enable;
+    }
+
+    /**
+     * Check if the current user is the user with the given email
+     * @param email the email of the user to check
+     * @return true if the current user is the user with the given email, false otherwise
+     */
+    public Boolean isCorrectUser(String email){
+        return email.equals(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    /**
+     * Check if the current user is an administrator
+     * @return true if the current user is an administrator, false otherwise
+     */
+    public Boolean isAdministrator(){
+        String currentRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        return currentRole.equalsIgnoreCase(ROLE_ADMIN);
     }
 }

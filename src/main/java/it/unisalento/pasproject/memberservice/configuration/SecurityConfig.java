@@ -1,5 +1,6 @@
 package it.unisalento.pasproject.memberservice.configuration;
 
+import it.unisalento.pasproject.memberservice.security.ExceptionFilter;
 import it.unisalento.pasproject.memberservice.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +9,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,43 +31,34 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("api/tasks/test").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         // Configurazione CORS
         http.cors(AbstractHttpConfigurer::disable); // Disabilita CORS
 
         // Configurazione CSRF
         http.csrf(AbstractHttpConfigurer::disable); // Disabilita CSRF
 
+        // Configurazione gestione eccezioni, adatta la gestione eccezioni al Servlet (carica prima degli altri componenti)
+        http.addFilterBefore(exceptionFilter(), UsernamePasswordAuthenticationFilter.class);
+
+
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**
-     * Creates an AuthenticationManager bean.
-     *
-     * @param authenticationConfiguration The AuthenticationConfiguration object to be used.
-     * @return An AuthenticationManager object.
-     * @throws Exception If an error occurs during the creation process.
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    /**
-     * Creates a JwtAuthenticationFilter bean.
-     *
-     * @return A JwtAuthenticationFilter object.
-     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
+    }
+
+    @Bean
+    public ExceptionFilter exceptionFilter() {
+        return new ExceptionFilter();
     }
 
 }

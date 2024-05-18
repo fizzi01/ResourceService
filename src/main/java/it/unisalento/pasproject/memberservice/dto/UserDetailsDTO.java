@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.memberservice.security;
+package it.unisalento.pasproject.memberservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;

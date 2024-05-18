@@ -1,6 +1,7 @@
 package it.unisalento.pasproject.memberservice.security;
 
 
+import it.unisalento.pasproject.memberservice.dto.UserDetailsDTO;
 import it.unisalento.pasproject.memberservice.exceptions.UserNotAuthorized;
 import it.unisalento.pasproject.memberservice.service.UserCheckService;
 import jakarta.servlet.FilterChain;
