@@ -6,8 +6,10 @@ services:
     ports:
       - "${SERVICE_PORT1}:8080"
       - "${SERVICE_PORT2}:8000"
+    env_file:
+      - .env
     depends_on:
-      - memberservice-db
+      - member-db
     networks:
       - greenspot-net
     volumes:
@@ -15,9 +17,9 @@ services:
     working_dir: /app
     entrypoint: java -Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000 -jar /app/app.jar
 
-  memberservice-db:
+  member-db:
     image: mongo:latest
-    container_name: memberservicedb
+    container_name: memberdb
     ports:
       - "${MONGO_PORT}:27017"
     volumes:
