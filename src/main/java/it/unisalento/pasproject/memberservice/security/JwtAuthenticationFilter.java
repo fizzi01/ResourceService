@@ -2,7 +2,8 @@ package it.unisalento.pasproject.memberservice.security;
 
 
 import it.unisalento.pasproject.memberservice.dto.UserDetailsDTO;
-import it.unisalento.pasproject.memberservice.exceptions.UserNotAuthorized;
+import it.unisalento.pasproject.memberservice.exceptions.AccessDeniedException;
+import it.unisalento.pasproject.memberservice.exceptions.UserNotAuthorizedException;
 import it.unisalento.pasproject.memberservice.service.UserCheckService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -48,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException, UserNotAuthorized {
+            throws ServletException, IOException, UserNotAuthorizedException, AccessDeniedException {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
@@ -59,10 +60,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwt = authorizationHeader.substring(7);
                 username = jwtUtilities.extractUsername(jwt);
+            }else {
+                throw new AccessDeniedException("Missing token");
             }
         } catch (Exception e) {
-            throw new UserNotAuthorized("User not authorized");
+            throw new AccessDeniedException("Invalid token: " + e.getMessage());
         }
+
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsDTO user = this.userCheckService.loadUserByUsername(username);
@@ -79,11 +83,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             } else {
-                throw new UserNotAuthorized("User not authorized");
+                throw new UserNotAuthorizedException("User not authorized");
             }
+        }
+
+        if ( SecurityContextHolder.getContext().getAuthentication() == null ) {
+            throw new AccessDeniedException("No authentication found");
         }
 
         chain.doFilter(request, response);
     }
-
 }

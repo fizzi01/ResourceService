@@ -272,6 +272,20 @@ public class ResourceService {
         return resourceMessageDTO;
     }
 
+    public ScoreMessageDTO getScoreMessageDTO(Resource resource) {
+        ScoreMessageDTO scoreMessageDTO = new ScoreMessageDTO();
+        scoreMessageDTO.setResourceName(resource.getName());
+        scoreMessageDTO.setResourceType(resource.getType());
+        return scoreMessageDTO;
+    }
+
+    public ScoreMessageDTO getScoreMessageDTO(ResourceDTO resourceDTO) {
+        ScoreMessageDTO scoreMessageDTO = new ScoreMessageDTO();
+        scoreMessageDTO.setResourceName(resourceDTO.getName());
+        scoreMessageDTO.setResourceType(resourceDTO.getType());
+        return scoreMessageDTO;
+    }
+
     /**
      * Finds resources based on the provided parameters.
      * @param name The name of the resource.

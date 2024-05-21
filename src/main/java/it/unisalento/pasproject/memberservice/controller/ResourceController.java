@@ -3,10 +3,7 @@ package it.unisalento.pasproject.memberservice.controller;
 import it.unisalento.pasproject.memberservice.domain.Resource;
 import it.unisalento.pasproject.memberservice.domain.ResourceCPU;
 import it.unisalento.pasproject.memberservice.domain.ResourceGPU;
-import it.unisalento.pasproject.memberservice.dto.ResourceCpuDTO;
-import it.unisalento.pasproject.memberservice.dto.ResourceDTO;
-import it.unisalento.pasproject.memberservice.dto.ResourceGpuDTO;
-import it.unisalento.pasproject.memberservice.dto.ResourceListDTO;
+import it.unisalento.pasproject.memberservice.dto.*;
 import it.unisalento.pasproject.memberservice.exceptions.ResourceNotFoundException;
 import it.unisalento.pasproject.memberservice.repositories.ResourceRepository;
 import it.unisalento.pasproject.memberservice.service.ResourceMessageHandler;
@@ -61,7 +58,7 @@ public class ResourceController {
      * @return a ResourceListDTO containing all resources
      */
     @GetMapping(value="/find/all")
-    @Secured({ROLE_MEMBRO})
+    //@Secured({ROLE_MEMBRO})
     public ResourceListDTO getAllResources() {
         ResourceListDTO resourceListDTO = new ResourceListDTO();
         List<ResourceDTO> list = new ArrayList<>();
@@ -95,7 +92,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if no resources match the given criteria
      */
     @GetMapping("/find")
-    @Secured(ROLE_MEMBRO)
+    //@Secured(ROLE_MEMBRO)
     public ResourceListDTO getByFilter(@RequestParam() String type,
                                        @RequestParam(required = false) String name,
                                        @RequestParam(required = false) String greenEnergyType,
@@ -131,11 +128,21 @@ public class ResourceController {
      * @return a ResponseEntity containing the inserted resource
      */
     @PostMapping(value="/insertResource", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({ROLE_MEMBRO})
+    //@Secured({ROLE_MEMBRO})
     public ResourceDTO insertResource(@RequestBody ResourceDTO newResource) {
-        LOGGER.info("New resource arrived: " + newResource.getAvailability());
+        LOGGER.info("New resource arrived: {}", newResource.getAvailability());
         if (newResource instanceof ResourceCpuDTO) {
             ResourceCPU resourceCPU = resourceService.getResourceCPU((ResourceCpuDTO) newResource);
+
+            ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceCPU));
+
+            if (scoreDTO != null) {
+                resourceCPU.setSingleCoreScore(scoreDTO.getScore());
+                resourceCPU.setMulticoreScore(scoreDTO.getMulticore_score());
+            } else {
+                throw new ResourceNotFoundException("The resource " + newResource.getName() + " is not present.");
+            }
+
             resourceCPU = resourceRepository.save(resourceCPU);
 
             resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceCPU));
@@ -143,6 +150,17 @@ public class ResourceController {
             return resourceService.getResourceCpuDTO(resourceCPU);
         } else if (newResource instanceof ResourceGpuDTO) {
             ResourceGPU resourceGPU = resourceService.getResourceGPU((ResourceGpuDTO) newResource);
+
+            ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceGPU));
+
+            if (scoreDTO != null) {
+                resourceGPU.setOpenclScore(scoreDTO.getOpencl());
+                resourceGPU.setVulkanScore(scoreDTO.getVulkan());
+                resourceGPU.setCudaScore(scoreDTO.getCuda());
+            } else {
+                throw new ResourceNotFoundException("The resource " + newResource.getName() + " is not present.");
+            }
+
             resourceGPU = resourceRepository.save(resourceGPU);
 
             resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceGPU));
@@ -161,7 +179,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if the resource to update does not exist
      */
     @PutMapping(value="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({ROLE_MEMBRO})
+    //@Secured({ROLE_MEMBRO})
     public ResourceDTO updateResource(@RequestBody ResourceDTO resourceToUpdate) throws ResourceNotFoundException {
         Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
 
@@ -171,10 +189,22 @@ public class ResourceController {
 
         Resource retResource = resource.get();
 
+        String oldName = retResource.getName();
+
         retResource = resourceService.updateResource(retResource, resourceToUpdate);
 
         if (retResource instanceof ResourceCPU retResourceCPU) {
             ResourceCpuDTO resourceCpuDTO = (ResourceCpuDTO) resourceToUpdate;
+            if (!resourceCpuDTO.getName().equals(oldName)) {
+                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceCpuDTO));
+
+                if (scoreDTO != null) {
+                    resourceCpuDTO.setSingleCoreScore(scoreDTO.getScore());
+                    resourceCpuDTO.setMulticoreScore(scoreDTO.getMulticore_score());
+                } else {
+                    throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
+                }
+            }
             retResourceCPU = resourceService.updateResourceCPU(retResourceCPU, resourceCpuDTO);
 
             retResourceCPU = resourceRepository.save(retResourceCPU);
@@ -184,6 +214,17 @@ public class ResourceController {
             return resourceService.getResourceCpuDTO(retResourceCPU);
         } else if (retResource instanceof ResourceGPU retResourceGPU) {
             ResourceGpuDTO resourceGpuDTO = (ResourceGpuDTO) resourceToUpdate;
+            if (!resourceGpuDTO.getName().equals(oldName)) {
+                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceGpuDTO));
+
+                if (scoreDTO != null) {
+                    resourceGpuDTO.setOpenclScore(scoreDTO.getOpencl());
+                    resourceGpuDTO.setVulkanScore(scoreDTO.getVulkan());
+                    resourceGpuDTO.setCudaScore(scoreDTO.getCuda());
+                } else {
+                    throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
+                }
+            }
             retResourceGPU = resourceService.updateResourceGPU(retResourceGPU, resourceGpuDTO);
 
             retResourceGPU = resourceRepository.save(retResourceGPU);

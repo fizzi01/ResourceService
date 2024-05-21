@@ -1,10 +1,9 @@
 package it.unisalento.pasproject.memberservice.service;
 
+import it.unisalento.pasproject.memberservice.business.io.exchanger.MessageExchanger;
 import it.unisalento.pasproject.memberservice.business.io.producer.MessageProducer;
 import it.unisalento.pasproject.memberservice.domain.Resource;
-import it.unisalento.pasproject.memberservice.dto.MessageDTO;
-import it.unisalento.pasproject.memberservice.dto.ResourceMessageAssignDTO;
-import it.unisalento.pasproject.memberservice.dto.ResourceMessageDTO;
+import it.unisalento.pasproject.memberservice.dto.*;
 import it.unisalento.pasproject.memberservice.repositories.ResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +23,19 @@ import java.util.Optional;
 public class ResourceMessageHandler {
     private final ResourceRepository resourceRepository;
     private final MessageProducer messageProducer;
+    private final MessageExchanger messageExchanger;
+
+    @Value("${rabbitmq.exchange.data.name}")
+    private String dataExchange;
 
     @Value("${rabbitmq.routing.newresource.key}")
     private String newResourceTopic;
 
-    @Value("${rabbitmq.exchange.data.name}")
-    private String dataExchange;
+    @Value("${rabbitmq.exchange.score.name}")
+    private String scoreExchange;
+
+    @Value("${rabbitmq.routing.score.key}")
+    private String scoreTopic;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceMessageHandler.class);
 
@@ -39,9 +45,10 @@ public class ResourceMessageHandler {
      * @param messageProducer The MessageProducer to be used for sending messages.
      */
     @Autowired
-    public ResourceMessageHandler(ResourceRepository resourceRepository, MessageProducer messageProducer) {
+    public ResourceMessageHandler(ResourceRepository resourceRepository, MessageProducer messageProducer, MessageExchanger messageExchanger) {
         this.resourceRepository = resourceRepository;
         this.messageProducer = messageProducer;
+        this.messageExchanger = messageExchanger;
     }
 
     /**
@@ -58,6 +65,10 @@ public class ResourceMessageHandler {
      */
     public void sendUpdateResourceMessage(ResourceMessageDTO message) {
         messageProducer.sendMessage(message, newResourceTopic, dataExchange);
+    }
+
+    public ScoreDTO requestResourceScore(ScoreMessageDTO message) {
+        return messageExchanger.exchangeMessage(message, scoreTopic, scoreExchange, ScoreDTO.class);
     }
 
     /**
