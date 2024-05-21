@@ -207,7 +207,7 @@ public class ResourceService {
      * @param resourceCpuDTO The ResourceCpuDTO to get the data from.
      * @return The updated ResourceCPU.
      */
-    public ResourceCPU updateResourceCPU(ResourceCPU resourceCPU, ResourceCpuDTO resourceCpuDTO) {
+    public ResourceCPU updateResourceCPU(ResourceCPU resourceCPU, ResourceCpuDTO resourceCpuDTO, boolean nameChanged) {
         Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
         Optional.of(resourceCpuDTO.getCores()).ifPresent(resourceCPU::setCores);
         Optional.of(resourceCpuDTO.getThreads()).ifPresent(resourceCPU::setThreads);
@@ -217,8 +217,11 @@ public class ResourceService {
         Optional.of(resourceCpuDTO.getTdp()).ifPresent(resourceCPU::setTdp);
         Optional.of(resourceCpuDTO.isHyperThreading()).ifPresent(resourceCPU::setHyperThreading);
         Optional.of(resourceCpuDTO.isOverclockingSupport()).ifPresent(resourceCPU::setOverclockingSupport);
-        Optional.of(resourceCpuDTO.getSingleCoreScore()).ifPresent(resourceCPU::setSingleCoreScore);
-        Optional.of(resourceCpuDTO.getMulticoreScore()).ifPresent(resourceCPU::setMulticoreScore);
+
+        if (nameChanged) {
+            Optional.of(resourceCpuDTO.getSingleCoreScore()).ifPresent(resourceCPU::setSingleCoreScore);
+            Optional.of(resourceCpuDTO.getMulticoreScore()).ifPresent(resourceCPU::setMulticoreScore);
+        }
 
         return resourceCPU;
     }
@@ -229,7 +232,7 @@ public class ResourceService {
      * @param resourceGpuDTO The ResourceGpuDTO to get the data from.
      * @return The updated ResourceGPU.
      */
-    public ResourceGPU updateResourceGPU(ResourceGPU resourceGPU, ResourceGpuDTO resourceGpuDTO) {
+    public ResourceGPU updateResourceGPU(ResourceGPU resourceGPU, ResourceGpuDTO resourceGpuDTO, boolean nameChanged) {
         Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
         Optional.ofNullable(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
         Optional.of(resourceGpuDTO.getVramSize()).ifPresent(resourceGPU::setVramSize);
@@ -239,9 +242,12 @@ public class ResourceService {
         Optional.of(resourceGpuDTO.getTdp()).ifPresent(resourceGPU::setTdp);
         Optional.of(resourceGpuDTO.isRayTracingSupport()).ifPresent(resourceGPU::setRayTracingSupport);
         Optional.of(resourceGpuDTO.isDlssSupport()).ifPresent(resourceGPU::setDlssSupport);
-        Optional.of(resourceGpuDTO.getOpenclScore()).ifPresent(resourceGPU::setOpenclScore);
-        Optional.of(resourceGpuDTO.getVulkanScore()).ifPresent(resourceGPU::setVulkanScore);
-        Optional.of(resourceGpuDTO.getCudaScore()).ifPresent(resourceGPU::setCudaScore);
+
+        if (nameChanged) {
+            Optional.of(resourceGpuDTO.getOpenclScore()).ifPresent(resourceGPU::setOpenclScore);
+            Optional.of(resourceGpuDTO.getVulkanScore()).ifPresent(resourceGPU::setVulkanScore);
+            Optional.of(resourceGpuDTO.getCudaScore()).ifPresent(resourceGPU::setCudaScore);
+        }
 
         return resourceGPU;
     }

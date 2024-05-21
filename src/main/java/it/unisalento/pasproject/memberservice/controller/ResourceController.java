@@ -190,12 +190,14 @@ public class ResourceController {
         Resource retResource = resource.get();
 
         String oldName = retResource.getName();
+        boolean nameChanged = false;
 
         retResource = resourceService.updateResource(retResource, resourceToUpdate);
 
         if (retResource instanceof ResourceCPU retResourceCPU) {
             ResourceCpuDTO resourceCpuDTO = (ResourceCpuDTO) resourceToUpdate;
             if (!resourceCpuDTO.getName().equals(oldName)) {
+                nameChanged = true;
                 ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceCpuDTO));
 
                 if (scoreDTO != null) {
@@ -205,7 +207,7 @@ public class ResourceController {
                     throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
                 }
             }
-            retResourceCPU = resourceService.updateResourceCPU(retResourceCPU, resourceCpuDTO);
+            retResourceCPU = resourceService.updateResourceCPU(retResourceCPU, resourceCpuDTO, nameChanged);
 
             retResourceCPU = resourceRepository.save(retResourceCPU);
 
@@ -215,6 +217,7 @@ public class ResourceController {
         } else if (retResource instanceof ResourceGPU retResourceGPU) {
             ResourceGpuDTO resourceGpuDTO = (ResourceGpuDTO) resourceToUpdate;
             if (!resourceGpuDTO.getName().equals(oldName)) {
+                nameChanged = true;
                 ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceGpuDTO));
 
                 if (scoreDTO != null) {
@@ -225,7 +228,7 @@ public class ResourceController {
                     throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
                 }
             }
-            retResourceGPU = resourceService.updateResourceGPU(retResourceGPU, resourceGpuDTO);
+            retResourceGPU = resourceService.updateResourceGPU(retResourceGPU, resourceGpuDTO, nameChanged);
 
             retResourceGPU = resourceRepository.save(retResourceGPU);
 
