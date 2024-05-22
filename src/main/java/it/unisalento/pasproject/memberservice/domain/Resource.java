@@ -70,5 +70,5 @@ public abstract class Resource {
     /**
      * The user to whom the resource is assigned.
      */
-    private String assignedUser;
+    private String assignedUser; //TODO: Cambia in taskID
 }
