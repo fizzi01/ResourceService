@@ -18,5 +18,5 @@ public class ResourceMessageAssignDTO {
     /**
      * The user to whom the resource is to be assigned.
      */
-    private String assignedUser;
+    private String currentTaskId;
 }

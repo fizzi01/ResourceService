@@ -83,5 +83,5 @@ public abstract class ResourceDTO {
     /**
      * The user to whom the resource is currently assigned.
      */
-    private String assignedUser;
+    private String currentTaskId;
 }

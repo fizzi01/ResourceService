@@ -41,7 +41,7 @@ public class ResourceMessageDTO {
     /**
      * The user to whom the resource is currently assigned.
      */
-    private String assignedUser;
+    private String currentTaskId;
 
     /**
      * The single core score of the resource.

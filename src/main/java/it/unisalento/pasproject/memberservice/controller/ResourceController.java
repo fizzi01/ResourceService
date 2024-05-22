@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +57,7 @@ public class ResourceController {
      * @return a ResourceListDTO containing all resources
      */
     @GetMapping(value="/find/all")
-    //@Secured({ROLE_MEMBRO})
+    @Secured({ROLE_MEMBRO})
     public ResourceListDTO getAllResources() {
         ResourceListDTO resourceListDTO = new ResourceListDTO();
         List<ResourceDTO> list = new ArrayList<>();
@@ -92,7 +91,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if no resources match the given criteria
      */
     @GetMapping("/find")
-    //@Secured(ROLE_MEMBRO)
+    @Secured(ROLE_MEMBRO)
     public ResourceListDTO getByFilter(@RequestParam() String type,
                                        @RequestParam(required = false) String name,
                                        @RequestParam(required = false) String greenEnergyType,
@@ -128,7 +127,7 @@ public class ResourceController {
      * @return a ResponseEntity containing the inserted resource
      */
     @PostMapping(value="/insertResource", consumes = MediaType.APPLICATION_JSON_VALUE)
-    //@Secured({ROLE_MEMBRO})
+    @Secured({ROLE_MEMBRO})
     public ResourceDTO insertResource(@RequestBody ResourceDTO newResource) {
         LOGGER.info("New resource arrived: {}", newResource.getAvailability());
         if (newResource instanceof ResourceCpuDTO) {
@@ -179,7 +178,7 @@ public class ResourceController {
      * @throws ResourceNotFoundException if the resource to update does not exist
      */
     @PutMapping(value="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-    //@Secured({ROLE_MEMBRO})
+    @Secured({ROLE_MEMBRO})
     public ResourceDTO updateResource(@RequestBody ResourceDTO resourceToUpdate) throws ResourceNotFoundException {
         Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
 

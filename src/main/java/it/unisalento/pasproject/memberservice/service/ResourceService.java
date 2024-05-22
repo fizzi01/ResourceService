@@ -61,7 +61,7 @@ public class ResourceService {
         Optional.of(resourceCpuDTO.getKWh()).ifPresent(resourceCPU::setKWh);
         Optional.ofNullable(resourceCpuDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
         Optional.ofNullable(resourceCpuDTO.getIsAvailable()).ifPresent(resourceCPU::setIsAvailable);
-        Optional.ofNullable(resourceCpuDTO.getAssignedUser()).ifPresent(resourceCPU::setAssignedUser);
+        Optional.ofNullable(resourceCpuDTO.getCurrentTaskId()).ifPresent(resourceCPU::setCurrentTaskId);
         Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
         Optional.of(resourceCpuDTO.getCores()).ifPresent(resourceCPU::setCores);
         Optional.of(resourceCpuDTO.getThreads()).ifPresent(resourceCPU::setThreads);
@@ -94,7 +94,7 @@ public class ResourceService {
         Optional.of(resourceGpuDTO.getKWh()).ifPresent(resourceGPU::setKWh);
         Optional.ofNullable(resourceGpuDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
         Optional.ofNullable(resourceGpuDTO.getIsAvailable()).ifPresent(resourceGPU::setIsAvailable);
-        Optional.ofNullable(resourceGpuDTO.getAssignedUser()).ifPresent(resourceGPU::setAssignedUser);
+        Optional.ofNullable(resourceGpuDTO.getCurrentTaskId()).ifPresent(resourceGPU::setCurrentTaskId);
         Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
         Optional.ofNullable(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
         Optional.of(resourceGpuDTO.getVramSize()).ifPresent(resourceGPU::setVramSize);
@@ -129,7 +129,7 @@ public class ResourceService {
         Optional.of(resourceCPU.getKWh()).ifPresent(dto::setKWh);
         Optional.ofNullable(resourceCPU.getMemberEmail()).ifPresent(dto::setMemberEmail);
         Optional.ofNullable(resourceCPU.getIsAvailable()).ifPresent(dto::setIsAvailable);
-        Optional.ofNullable(resourceCPU.getAssignedUser()).ifPresent(dto::setAssignedUser);
+        Optional.ofNullable(resourceCPU.getCurrentTaskId()).ifPresent(dto::setCurrentTaskId);
         Optional.ofNullable(resourceCPU.getArchitecture()).ifPresent(dto::setArchitecture);
         Optional.of(resourceCPU.getCores()).ifPresent(dto::setCores);
         Optional.of(resourceCPU.getThreads()).ifPresent(dto::setThreads);
@@ -163,7 +163,7 @@ public class ResourceService {
         Optional.of(resourceGPU.getKWh()).ifPresent(dto::setKWh);
         Optional.ofNullable(resourceGPU.getMemberEmail()).ifPresent(dto::setMemberEmail);
         Optional.ofNullable(resourceGPU.getIsAvailable()).ifPresent(dto::setIsAvailable);
-        Optional.ofNullable(resourceGPU.getAssignedUser()).ifPresent(dto::setAssignedUser);
+        Optional.ofNullable(resourceGPU.getCurrentTaskId()).ifPresent(dto::setCurrentTaskId);
         Optional.ofNullable(resourceGPU.getArchitecture()).ifPresent(dto::setArchitecture);
         Optional.ofNullable(resourceGPU.getVramType()).ifPresent(dto::setVramType);
         Optional.of(resourceGPU.getVramSize()).ifPresent(dto::setVramSize);
@@ -196,7 +196,7 @@ public class ResourceService {
         Optional.of(resourceDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
         Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
-        Optional.ofNullable(resourceDTO.getAssignedUser()).ifPresent(resource::setAssignedUser);
+        Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resource::setCurrentTaskId);
 
         return resource;
     }
@@ -265,7 +265,7 @@ public class ResourceService {
         Optional.of(resource.getKWh()).ifPresent(resourceMessageDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceMessageDTO::setMemberEmail);
         Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceMessageDTO::setIsAvailable);
-        Optional.ofNullable(resource.getAssignedUser()).ifPresent(resourceMessageDTO::setAssignedUser);
+        Optional.ofNullable(resource.getCurrentTaskId()).ifPresent(resourceMessageDTO::setCurrentTaskId);
         if (resource instanceof ResourceCPU) {
             Optional.of(((ResourceCPU) resource).getSingleCoreScore()).ifPresent(resourceMessageDTO::setSingleCoreScore);
             Optional.of(((ResourceCPU) resource).getMulticoreScore()).ifPresent(resourceMessageDTO::setMulticoreScore);

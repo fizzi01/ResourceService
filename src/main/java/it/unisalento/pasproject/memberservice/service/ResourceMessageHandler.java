@@ -86,7 +86,7 @@ public class ResourceMessageHandler {
 
         Resource retResource = resource.get();
 
-        Optional.ofNullable(message.getAssignedUser()).ifPresent(retResource::setAssignedUser);
+        Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
 
         return new MessageDTO("Resource assigned", 200);
     }

@@ -39,6 +39,10 @@ public class JwtUtilities {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
     /**
      * Extracts the expiration date from the given JWT.
      * @param token the JWT
@@ -49,7 +53,7 @@ public class JwtUtilities {
     }
 
     /**
-     * Extracts a claim from the given JWT using the provided claims resolver.
+     * Extracts a claim from the given JWT using the provided claims' resolver.
      * @param token the JWT
      * @param claimsResolver the claims resolver
      * @return the claim
@@ -87,8 +91,9 @@ public class JwtUtilities {
      * @param userDetails the UserDetails
      * @return true if the JWT is valid, false otherwise
      */
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token, UserDetails userDetails, String role) {
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        final String tokenRole = extractRole(token);
+        return (username.equals(userDetails.getUsername()) && tokenRole.equalsIgnoreCase(role)  && !isTokenExpired(token));
     }
 }
