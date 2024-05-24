@@ -18,6 +18,8 @@ public class ResourceMessageDTO {
      */
     private String id;
 
+    private String name;
+
     /**
      * The number of hours the resource is available.
      */
