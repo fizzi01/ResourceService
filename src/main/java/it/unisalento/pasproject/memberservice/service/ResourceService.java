@@ -1,10 +1,8 @@
 package it.unisalento.pasproject.memberservice.service;
 
-import it.unisalento.pasproject.memberservice.domain.Resource;
-import it.unisalento.pasproject.memberservice.domain.ResourceCPU;
-import it.unisalento.pasproject.memberservice.domain.ResourceFactory;
-import it.unisalento.pasproject.memberservice.domain.ResourceGPU;
+import it.unisalento.pasproject.memberservice.domain.*;
 import it.unisalento.pasproject.memberservice.dto.*;
+import it.unisalento.pasproject.memberservice.exceptions.BadFormatAvailabilityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,6 +30,8 @@ public class ResourceService {
     private final ResourceDTOFactory resourceDTOFactory;
 
     private final ResourceFactory resourceFactory;
+
+    private final int AVAILABILITY_TRESHOLD = 30;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceService.class);
 
@@ -125,6 +127,7 @@ public class ResourceService {
             Optional.ofNullable(resourceCpuDTO.getBrand()).ifPresent(resourceCPU::setBrand);
             Optional.ofNullable(resourceCpuDTO.getModel()).ifPresent(resourceCPU::setModel);
             Optional.ofNullable(resourceCpuDTO.getGreenEnergyType()).ifPresent(resourceCPU::setGreenEnergyType);
+            checkTimeDifference(resourceDTO.getAvailability());
             Optional.ofNullable(resourceCpuDTO.getAvailability()).ifPresent(resourceCPU::setAvailability);
             Optional.of(resourceCpuDTO.getKWh()).ifPresent(resourceCPU::setKWh);
             Optional.ofNullable(resourceCpuDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
@@ -155,6 +158,7 @@ public class ResourceService {
             Optional.ofNullable(resourceGpuDTO.getBrand()).ifPresent(resourceGPU::setBrand);
             Optional.ofNullable(resourceGpuDTO.getModel()).ifPresent(resourceGPU::setModel);
             Optional.ofNullable(resourceGpuDTO.getGreenEnergyType()).ifPresent(resourceGPU::setGreenEnergyType);
+            checkTimeDifference(resourceDTO.getAvailability());
             Optional.ofNullable(resourceGpuDTO.getAvailability()).ifPresent(resourceGPU::setAvailability);
             Optional.of(resourceGpuDTO.getKWh()).ifPresent(resourceGPU::setKWh);
             Optional.ofNullable(resourceGpuDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
@@ -181,6 +185,19 @@ public class ResourceService {
         }
 
         return resource;
+    }
+
+    private void checkTimeDifference(List<Availability> availabilities) {
+        for (Availability availability : availabilities) {
+            LocalTime startTime = availability.getStartTime();
+            LocalTime endTime = availability.getEndTime();
+
+            long minutes = ChronoUnit.MINUTES.between(startTime, endTime);
+
+            if (minutes % AVAILABILITY_TRESHOLD != 0) {
+                throw new BadFormatAvailabilityException("The difference between endTime and startTime must be a multiple of 30 minutes.");
+            }
+        }
     }
 
     /**
@@ -405,6 +422,7 @@ public class ResourceService {
         Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resource::setBrand);
         Optional.ofNullable(resourceDTO.getModel()).ifPresent(resource::setModel);
         Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resource::setGreenEnergyType);
+        checkTimeDifference(resourceDTO.getAvailability());
         Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
