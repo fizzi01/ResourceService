@@ -9,14 +9,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ResourceMessageAssignDTO {
-    /**
-     * The ID of the resource to be assigned.
-     */
-    private String idResource;
+public class ResourceMessageStatusDTO {
+    private String id;
 
-    /**
-     * The user to whom the resource is to be assigned.
-     */
+    private Boolean isAvailable;
+
     private String currentTaskId;
 }

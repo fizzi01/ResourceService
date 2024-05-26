@@ -77,8 +77,8 @@ public class ResourceMessageHandler {
      * @return A MessageDTO indicating the result of the operation.
      */
     @RabbitListener(queues = "${rabbitmq.queue.resourceassignment.name}")
-    public MessageDTO receiveResourceAssignmentMessage(ResourceMessageAssignDTO message) {
-        Optional<Resource> resource = resourceRepository.findById(message.getIdResource());
+    public MessageDTO receiveResourceAssignmentMessage(ResourceMessageStatusDTO message) {
+        Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
             return new MessageDTO("Resource not found", 404);
@@ -86,6 +86,7 @@ public class ResourceMessageHandler {
 
         Resource retResource = resource.get();
 
+        Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
 
         return new MessageDTO("Resource assigned", 200);
@@ -96,8 +97,8 @@ public class ResourceMessageHandler {
      * @param message The received message.
      * @return A MessageDTO indicating the result of the operation.
      */
-    @RabbitListener(queues = "${rabbitmq.queue.resourceusage.name}")
-    public MessageDTO receiveResourceUsageMessage(ResourceMessageDTO message) {
+    @RabbitListener(queues = "${rabbitmq.queue.resourcedeallocation.name}")
+    public MessageDTO receiveResourceDeallocationMessage(ResourceMessageStatusDTO message) {
         Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
@@ -107,6 +108,7 @@ public class ResourceMessageHandler {
         Resource retResource = resource.get();
 
         Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);
+        Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
 
         return new MessageDTO("Resource used", 200);
     }

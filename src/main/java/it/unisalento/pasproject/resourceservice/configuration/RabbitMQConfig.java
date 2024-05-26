@@ -77,7 +77,7 @@ public class RabbitMQConfig {
     private String resourceAssignmentTopic;
 
     //TODO: Vedere se questa coda e questo topic sono necessari
-    @Value("${rabbitmq.queue.resourceusage.name}")
+    @Value("${rabbitmq.queue.resourcedeallocation.name}")
     private String resourceUsageQueue;
 
     @Value("${rabbitmq.routing.resourceusage.key}")
