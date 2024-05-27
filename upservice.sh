@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Pulisce la cartella build/libs
+rm -rf build/libs/*
 
 # Ferma il container Docker
 docker-compose stop
