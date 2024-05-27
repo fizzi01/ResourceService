@@ -74,42 +74,36 @@ public class ResourceMessageHandler {
     /**
      * Receives a resource assignment message.
      * @param message The received message.
-     * @return A MessageDTO indicating the result of the operation.
      */
     @RabbitListener(queues = "${rabbitmq.queue.resourceassignment.name}")
-    public MessageDTO receiveResourceAssignmentMessage(ResourceMessageStatusDTO message) {
+    public void receiveResourceAssignmentMessage(ResourceMessageStatusDTO message) {
         Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
-            return new MessageDTO("Resource not found", 404);
+            throw new RuntimeException("Resource not found");
         }
 
         Resource retResource = resource.get();
 
         Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
-
-        return new MessageDTO("Resource assigned", 200);
     }
 
     /**
      * Receives a resource usage message.
      * @param message The received message.
-     * @return A MessageDTO indicating the result of the operation.
      */
     @RabbitListener(queues = "${rabbitmq.queue.resourcedeallocation.name}")
-    public MessageDTO receiveResourceDeallocationMessage(ResourceMessageStatusDTO message) {
+    public void receiveResourceDeallocationMessage(ResourceMessageStatusDTO message) {
         Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
-            return new MessageDTO("Resource not found", 404);
+            throw new RuntimeException("Resource not found");
         }
 
         Resource retResource = resource.get();
 
         Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
-
-        return new MessageDTO("Resource used", 200);
     }
 }
