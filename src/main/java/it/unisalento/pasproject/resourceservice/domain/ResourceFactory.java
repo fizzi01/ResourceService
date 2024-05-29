@@ -8,7 +8,7 @@ public class ResourceFactory {
     /**
      * The ResourceType enum lists the types of Resources that can be created by the ResourceFactory.
      */
-    public enum ResourceType { GPU, CPU }
+    public enum ResourceType { GPU, CPU, SOC }
 
     /**
      * Returns a new instance of a Resource subclass based on the given ResourceType.
@@ -24,6 +24,7 @@ public class ResourceFactory {
         return switch (type) {
             case GPU -> new ResourceGPU();
             case CPU -> new ResourceCPU();
+            case SOC -> new ResourceSoC();
         };
     }
 }

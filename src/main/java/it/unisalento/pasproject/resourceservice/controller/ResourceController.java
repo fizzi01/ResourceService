@@ -1,12 +1,10 @@
 package it.unisalento.pasproject.resourceservice.controller;
 
 import it.unisalento.pasproject.resourceservice.domain.Resource;
-import it.unisalento.pasproject.resourceservice.domain.ResourceCPU;
-import it.unisalento.pasproject.resourceservice.domain.ResourceGPU;
 import it.unisalento.pasproject.resourceservice.dto.*;
+import it.unisalento.pasproject.resourceservice.exceptions.ExistingResourceException;
 import it.unisalento.pasproject.resourceservice.exceptions.ResourceNotFoundException;
 import it.unisalento.pasproject.resourceservice.repositories.ResourceRepository;
-import it.unisalento.pasproject.resourceservice.service.ResourceMessageHandler;
 import it.unisalento.pasproject.resourceservice.service.ResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static it.unisalento.pasproject.resourceservice.security.SecurityConstants.ROLE_MEMBRO;
 
@@ -33,8 +30,6 @@ public class ResourceController {
 
     private final ResourceService resourceService;
 
-    private final ResourceMessageHandler resourceMessageHandler;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
     /**
@@ -42,13 +37,11 @@ public class ResourceController {
      *
      * @param resourceRepository the repository to use for data access
      * @param resourceService the service to use for business logic
-     * @param resourceMessageHandler the message handler to use for sending resource messages
      */
     @Autowired
-    public ResourceController(ResourceRepository resourceRepository, ResourceService resourceService, ResourceMessageHandler resourceMessageHandler) {
+    public ResourceController(ResourceRepository resourceRepository, ResourceService resourceService) {
         this.resourceRepository = resourceRepository;
         this.resourceService = resourceService;
-        this.resourceMessageHandler = resourceMessageHandler;
     }
 
     /**
@@ -65,12 +58,13 @@ public class ResourceController {
 
         List<Resource> resources = resourceRepository.findAll();
 
-        for (Resource resource : resources){
-            if (resource instanceof ResourceCPU) {
-                list.add(resourceService.getResourceCpuDTO((ResourceCPU) resource));
+        for (Resource resource : resources) {
+            list.add(resourceService.getResourceDTO(resource));
+            /*if (resource instanceof ResourceCPU) {
+                list.add(resourceService.getResourceDTO(resource));
             } else if (resource instanceof ResourceGPU) {
-                list.add(resourceService.getResourceGpuDTO((ResourceGPU) resource));
-            }
+                list.add(resourceService.get((ResourceGPU) resource));
+            }*/
         }
 
         return resourceListDTO;
@@ -109,12 +103,13 @@ public class ResourceController {
         if (resources.isEmpty())
             throw new ResourceNotFoundException("No resources found with the given criteria.");
 
-        for (Resource resource : resources){
-            if (resource instanceof ResourceCPU) {
+        for (Resource resource : resources) {
+            list.add(resourceService.getResourceDTO(resource));
+            /*if (resource instanceof ResourceCPU) {
                 list.add(resourceService.getResourceCpuDTO((ResourceCPU) resource));
             } else if (resource instanceof ResourceGPU) {
                 list.add(resourceService.getResourceGpuDTO((ResourceGPU) resource));
-            }
+            }*/
         }
 
         return resourceListDTO;
@@ -130,8 +125,18 @@ public class ResourceController {
     @Secured({ROLE_MEMBRO})
     public ResourceDTO insertResource(@RequestBody ResourceDTO newResource) {
         LOGGER.info("New resource arrived: {}", newResource.getAvailability());
-        if (newResource instanceof ResourceCpuDTO) {
-            ResourceCPU resourceCPU = resourceService.getResourceCPU((ResourceCpuDTO) newResource);
+
+        ResourceDTO resourceDTO = resourceService.insertResource(newResource);
+
+        if (resourceDTO == null) {
+            throw new ExistingResourceException("Resource already exists with name: " + newResource.getName() + ", for " + newResource.getMemberEmail() + ".");
+        }
+
+        LOGGER.info("New resource inserted: {}", resourceDTO.getId());
+
+        return resourceDTO;
+        /*if (newResource instanceof ResourceCpuDTO) {
+            ResourceCPU resourceCPU = (ResourceCPU) resourceService.getResource(newResource);
 
             ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceCPU));
 
@@ -146,9 +151,9 @@ public class ResourceController {
 
             resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceCPU));
 
-            return resourceService.getResourceCpuDTO(resourceCPU);
+            return resourceService.getResourceDTO(resourceCPU);
         } else if (newResource instanceof ResourceGpuDTO) {
-            ResourceGPU resourceGPU = resourceService.getResourceGPU((ResourceGpuDTO) newResource);
+            ResourceGPU resourceGPU = (ResourceGPU) resourceService.getResource(newResource);
 
             ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceGPU));
 
@@ -164,10 +169,10 @@ public class ResourceController {
 
             resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceGPU));
 
-            return resourceService.getResourceGpuDTO(resourceGPU);
+            return resourceService.getResourceDTO(resourceGPU);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + newResource.getClass());
-        }
+        }*/
     }
 
     /**
@@ -180,7 +185,17 @@ public class ResourceController {
     @PutMapping(value="/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_MEMBRO})
     public ResourceDTO updateResource(@RequestBody ResourceDTO resourceToUpdate) throws ResourceNotFoundException {
-        Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
+        LOGGER.info("Resource to update: {}", resourceToUpdate.getId());
+        ResourceDTO resourceDTO = resourceService.updateResource(resourceToUpdate);
+
+        if (resourceDTO == null) {
+            throw new ResourceNotFoundException("Resource not found with id: " + resourceToUpdate.getId() + ".");
+        }
+
+        LOGGER.info("Resource updated: {}", resourceDTO.getId());
+
+        return resourceDTO;
+        /*Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
 
         if(resource.isEmpty()) {
             throw new ResourceNotFoundException("Resource not found with email: " + resourceToUpdate.getId() + ".");
@@ -191,7 +206,7 @@ public class ResourceController {
         String oldName = retResource.getName();
         boolean nameChanged = false;
 
-        retResource = resourceService.updateResource(retResource, resourceToUpdate);
+        retResource = resourceService.updateResource(resourceToUpdate);
 
         if (retResource instanceof ResourceCPU retResourceCPU) {
             ResourceCpuDTO resourceCpuDTO = (ResourceCpuDTO) resourceToUpdate;
@@ -206,13 +221,13 @@ public class ResourceController {
                     throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
                 }
             }
-            retResourceCPU = resourceService.updateResourceCPU(retResourceCPU, resourceCpuDTO, nameChanged);
+            retResourceCPU = (ResourceCPU) resourceService.updateResource(resourceCpuDTO);
 
             retResourceCPU = resourceRepository.save(retResourceCPU);
 
             resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResourceCPU));
 
-            return resourceService.getResourceCpuDTO(retResourceCPU);
+            return resourceService.getResourceDTO(retResourceCPU);
         } else if (retResource instanceof ResourceGPU retResourceGPU) {
             ResourceGpuDTO resourceGpuDTO = (ResourceGpuDTO) resourceToUpdate;
             if (!resourceGpuDTO.getName().equals(oldName)) {
@@ -227,16 +242,16 @@ public class ResourceController {
                     throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
                 }
             }
-            retResourceGPU = resourceService.updateResourceGPU(retResourceGPU, resourceGpuDTO, nameChanged);
+            retResourceGPU = (ResourceGPU) resourceService.updateResource(resourceGpuDTO);
 
             retResourceGPU = resourceRepository.save(retResourceGPU);
 
             resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResourceGPU));
 
-            return resourceService.getResourceGpuDTO(retResourceGPU);
+            return resourceService.getResourceDTO(retResourceGPU);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
-        }
+        }*/
     }
 
     /**
@@ -249,8 +264,14 @@ public class ResourceController {
     @PutMapping(value="/available/{id}")
     @Secured({ROLE_MEMBRO})
     public ResourceDTO makeAvailable(@PathVariable String id) throws ResourceNotFoundException {
+        ResourceDTO resourceDTO = resourceService.updateIsAvailable(id, true);
 
-        if (resourceRepository.findById(id).isEmpty()) {
+        if (resourceDTO == null) {
+            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
+        }
+
+        return resourceDTO;
+        /*if (resourceRepository.findById(id).isEmpty()) {
             throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
         }
 
@@ -266,13 +287,13 @@ public class ResourceController {
 
         if (retResource instanceof ResourceCPU) {
             resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceCpuDTO((ResourceCPU) retResource);
+            return resourceService.getResourceDTO(retResource);
         } else if (retResource instanceof ResourceGPU) {
             resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceGpuDTO((ResourceGPU) retResource);
+            return resourceService.getResourceDTO(retResource);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
-        }
+        }*/
     }
 
     /**
@@ -285,8 +306,14 @@ public class ResourceController {
     @PutMapping(value="/unavailable/{id}")
     @Secured({ROLE_MEMBRO})
     public ResourceDTO makeUnavailable(@PathVariable String id) throws ResourceNotFoundException {
+        ResourceDTO resourceDTO = resourceService.updateIsAvailable(id, false);
 
-        Optional<Resource> resource = resourceRepository.findById(id);
+        if (resourceDTO == null) {
+            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
+        }
+
+        return resourceDTO;
+        /*Optional<Resource> resource = resourceRepository.findById(id);
 
         if(resource.isEmpty()) {
             throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
@@ -298,12 +325,12 @@ public class ResourceController {
 
         if (retResource instanceof ResourceCPU) {
             resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceCpuDTO((ResourceCPU) retResource);
+            return resourceService.getResourceDTO(retResource);
         } else if (retResource instanceof ResourceGPU) {
             resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceGpuDTO((ResourceGPU) retResource);
+            return resourceService.getResourceDTO(retResource);
         } else {
             throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
-        }
+        }*/
     }
 }

@@ -24,7 +24,8 @@ import java.util.List;
 )
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ResourceCpuDTO.class, name = "cpu"),
-        @JsonSubTypes.Type(value = ResourceGpuDTO.class, name = "gpu")
+        @JsonSubTypes.Type(value = ResourceGpuDTO.class, name = "gpu"),
+        @JsonSubTypes.Type(value = ResourceSoCDTO.class, name = "soc")
 })
 @Getter
 @Setter

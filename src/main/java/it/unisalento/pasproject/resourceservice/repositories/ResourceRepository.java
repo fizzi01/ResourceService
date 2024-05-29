@@ -9,4 +9,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * The type of the domain object is Resource, and the type of the ID is String.
  */
 public interface ResourceRepository extends MongoRepository<Resource, String> {
+    Resource findByNameAndMemberEmail(String name, String memberEmail);
 }

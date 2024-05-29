@@ -8,7 +8,7 @@ public class ResourceDTOFactory {
     /**
      * The ResourceDTOType enum lists the types of ResourceDTOs that can be created by the ResourceDTOFactory.
      */
-    public enum ResourceDTOType { GPU, CPU }
+    public enum ResourceDTOType { GPU, CPU, SOC }
 
     /**
      * Returns a new instance of a ResourceDTO subclass based on the given ResourceDTOType.
@@ -24,6 +24,7 @@ public class ResourceDTOFactory {
         return switch (type) {
             case GPU -> new ResourceGpuDTO();
             case CPU -> new ResourceCpuDTO();
+            case SOC -> new ResourceSoCDTO();
         };
     }
 }
