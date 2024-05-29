@@ -57,7 +57,6 @@ public class ResourceService {
     public Resource getResource(ResourceDTO resourceDTO) {
         switch (resourceDTO) {
             case ResourceCpuDTO resourceCpuDTO -> {
-                LOGGER.info("ResourceCpuDTO: " + resourceCpuDTO.getName());
                 ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceDTO));
 
                 if (scoreDTO == null) {
@@ -321,7 +320,7 @@ public class ResourceService {
 
         Resource retResource = resource.get();
 
-        if (resourceDTO instanceof ResourceCpuDTO resourceCpuDTO && retResource instanceof ResourceCPU resourceCPU) {
+        if(resourceDTO instanceof ResourceCpuDTO resourceCpuDTO && retResource instanceof ResourceCPU resourceCPU) {
             if(!resourceCpuDTO.getName().equals(resourceCPU.getName())) {
                 ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceCpuDTO));
 
