@@ -507,13 +507,26 @@ public class ResourceService {
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceMessageDTO::setMemberEmail);
         Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceMessageDTO::setIsAvailable);
         Optional.ofNullable(resource.getCurrentTaskId()).ifPresent(resourceMessageDTO::setCurrentTaskId);
-        if (resource instanceof ResourceCPU) {
-            Optional.of(((ResourceCPU) resource).getSingleCoreScore()).ifPresent(resourceMessageDTO::setSingleCoreScore);
-            Optional.of(((ResourceCPU) resource).getMulticoreScore()).ifPresent(resourceMessageDTO::setMulticoreScore);
-        } else if (resource instanceof ResourceGPU) {
-            Optional.of(((ResourceGPU) resource).getOpenclScore()).ifPresent(resourceMessageDTO::setOpenclScore);
-            Optional.of(((ResourceGPU) resource).getVulkanScore()).ifPresent(resourceMessageDTO::setVulkanScore);
-            Optional.of(((ResourceGPU) resource).getCudaScore()).ifPresent(resourceMessageDTO::setCudaScore);
+
+        switch (resource) {
+            case ResourceCPU resourceCPU -> {
+                Optional.of(resourceCPU.getSingleCoreScore()).ifPresent(resourceMessageDTO::setSingleCoreScore);
+                Optional.of(resourceCPU.getMulticoreScore()).ifPresent(resourceMessageDTO::setMulticoreScore);
+            }
+            case ResourceGPU resourceGPU -> {
+                Optional.of(resourceGPU.getOpenclScore()).ifPresent(resourceMessageDTO::setOpenclScore);
+                Optional.of(resourceGPU.getVulkanScore()).ifPresent(resourceMessageDTO::setVulkanScore);
+                Optional.of(resourceGPU.getCudaScore()).ifPresent(resourceMessageDTO::setCudaScore);
+            }
+            case ResourceSoC resourceSoC -> {
+                Optional.of(resourceSoC.getSingleCoreScore()).ifPresent(resourceMessageDTO::setSingleCoreScore);
+                Optional.of(resourceSoC.getMulticoreScore()).ifPresent(resourceMessageDTO::setMulticoreScore);
+                Optional.of(resourceSoC.getOpenclScore()).ifPresent(resourceMessageDTO::setOpenclScore);
+                Optional.of(resourceSoC.getVulkanScore()).ifPresent(resourceMessageDTO::setVulkanScore);
+                Optional.of(resourceSoC.getCudaScore()).ifPresent(resourceMessageDTO::setCudaScore);
+            }
+            default -> {
+            }
         }
 
         return resourceMessageDTO;
