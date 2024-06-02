@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.resourceservice.exceptions;
+package it.unisalento.pasproject.resourceservice.exceptions.global;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

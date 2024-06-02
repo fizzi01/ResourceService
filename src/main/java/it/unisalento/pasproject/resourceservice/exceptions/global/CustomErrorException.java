@@ -1,4 +1,4 @@
-package it.unisalento.pasproject.resourceservice.exceptions;
+package it.unisalento.pasproject.resourceservice.exceptions.global;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

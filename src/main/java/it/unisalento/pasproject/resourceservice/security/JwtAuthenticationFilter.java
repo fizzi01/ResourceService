@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException, UserNotAuthorizedException, AccessDeniedException {
+            throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
@@ -70,19 +70,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetailsDTO user = this.userCheckService.loadUserByUsername(username);
 
             String userEmail;
             String userRole;
+            boolean userEnabled;
 
             // Se token valido e risposta del cqrs null, si assume che l'utente sia l'email del token
             if (user == null){
                 userEmail = username;
                 userRole = role;
+                userEnabled = true;
             } else {
                 userEmail = user.getEmail();
                 userRole = user.getRole();
+                userEnabled = user.getEnabled();
             }
 
             UserDetails userDetails = User.builder()
@@ -91,7 +94,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .authorities(userRole) // Set roles or authorities from the UserDetailsDTO
                     .build();
 
-            if (jwtUtilities.validateToken(jwt, userDetails, userRole) && userCheckService.isEnable(user.getEnabled())) {
+            if (jwtUtilities.validateToken(jwt, userDetails, userRole) && userCheckService.isEnable(userEnabled)) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken

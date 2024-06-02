@@ -60,11 +60,6 @@ public class ResourceController {
 
         for (Resource resource : resources) {
             list.add(resourceService.getResourceDTO(resource));
-            /*if (resource instanceof ResourceCPU) {
-                list.add(resourceService.getResourceDTO(resource));
-            } else if (resource instanceof ResourceGPU) {
-                list.add(resourceService.get((ResourceGPU) resource));
-            }*/
         }
 
         return resourceListDTO;
@@ -105,11 +100,6 @@ public class ResourceController {
 
         for (Resource resource : resources) {
             list.add(resourceService.getResourceDTO(resource));
-            /*if (resource instanceof ResourceCPU) {
-                list.add(resourceService.getResourceCpuDTO((ResourceCPU) resource));
-            } else if (resource instanceof ResourceGPU) {
-                list.add(resourceService.getResourceGpuDTO((ResourceGPU) resource));
-            }*/
         }
 
         return resourceListDTO;
@@ -135,44 +125,6 @@ public class ResourceController {
         LOGGER.info("New resource inserted: {}", resourceDTO.getId());
 
         return resourceDTO;
-        /*if (newResource instanceof ResourceCpuDTO) {
-            ResourceCPU resourceCPU = (ResourceCPU) resourceService.getResource(newResource);
-
-            ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceCPU));
-
-            if (scoreDTO != null) {
-                resourceCPU.setSingleCoreScore(scoreDTO.getScore());
-                resourceCPU.setMulticoreScore(scoreDTO.getMulticore_score());
-            } else {
-                throw new ResourceNotFoundException("The resource " + newResource.getName() + " is not present.");
-            }
-
-            resourceCPU = resourceRepository.save(resourceCPU);
-
-            resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceCPU));
-
-            return resourceService.getResourceDTO(resourceCPU);
-        } else if (newResource instanceof ResourceGpuDTO) {
-            ResourceGPU resourceGPU = (ResourceGPU) resourceService.getResource(newResource);
-
-            ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceGPU));
-
-            if (scoreDTO != null) {
-                resourceGPU.setOpenclScore(scoreDTO.getOpencl());
-                resourceGPU.setVulkanScore(scoreDTO.getVulkan());
-                resourceGPU.setCudaScore(scoreDTO.getCuda());
-            } else {
-                throw new ResourceNotFoundException("The resource " + newResource.getName() + " is not present.");
-            }
-
-            resourceGPU = resourceRepository.save(resourceGPU);
-
-            resourceMessageHandler.sendNewResourceMessage(resourceService.getResourceMessageDTO(resourceGPU));
-
-            return resourceService.getResourceDTO(resourceGPU);
-        } else {
-            throw new IllegalArgumentException("Invalid resource type: " + newResource.getClass());
-        }*/
     }
 
     /**
@@ -195,63 +147,6 @@ public class ResourceController {
         LOGGER.info("Resource updated: {}", resourceDTO.getId());
 
         return resourceDTO;
-        /*Optional<Resource> resource = resourceRepository.findById(resourceToUpdate.getId());
-
-        if(resource.isEmpty()) {
-            throw new ResourceNotFoundException("Resource not found with email: " + resourceToUpdate.getId() + ".");
-        }
-
-        Resource retResource = resource.get();
-
-        String oldName = retResource.getName();
-        boolean nameChanged = false;
-
-        retResource = resourceService.updateResource(resourceToUpdate);
-
-        if (retResource instanceof ResourceCPU retResourceCPU) {
-            ResourceCpuDTO resourceCpuDTO = (ResourceCpuDTO) resourceToUpdate;
-            if (!resourceCpuDTO.getName().equals(oldName)) {
-                nameChanged = true;
-                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceCpuDTO));
-
-                if (scoreDTO != null) {
-                    resourceCpuDTO.setSingleCoreScore(scoreDTO.getScore());
-                    resourceCpuDTO.setMulticoreScore(scoreDTO.getMulticore_score());
-                } else {
-                    throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
-                }
-            }
-            retResourceCPU = (ResourceCPU) resourceService.updateResource(resourceCpuDTO);
-
-            retResourceCPU = resourceRepository.save(retResourceCPU);
-
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResourceCPU));
-
-            return resourceService.getResourceDTO(retResourceCPU);
-        } else if (retResource instanceof ResourceGPU retResourceGPU) {
-            ResourceGpuDTO resourceGpuDTO = (ResourceGpuDTO) resourceToUpdate;
-            if (!resourceGpuDTO.getName().equals(oldName)) {
-                nameChanged = true;
-                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(resourceService.getScoreMessageDTO(resourceGpuDTO));
-
-                if (scoreDTO != null) {
-                    resourceGpuDTO.setOpenclScore(scoreDTO.getOpencl());
-                    resourceGpuDTO.setVulkanScore(scoreDTO.getVulkan());
-                    resourceGpuDTO.setCudaScore(scoreDTO.getCuda());
-                } else {
-                    throw new ResourceNotFoundException("The resource " + resourceToUpdate.getName() + " is not present.");
-                }
-            }
-            retResourceGPU = (ResourceGPU) resourceService.updateResource(resourceGpuDTO);
-
-            retResourceGPU = resourceRepository.save(retResourceGPU);
-
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResourceGPU));
-
-            return resourceService.getResourceDTO(retResourceGPU);
-        } else {
-            throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
-        }*/
     }
 
     /**
@@ -271,29 +166,6 @@ public class ResourceController {
         }
 
         return resourceDTO;
-        /*if (resourceRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
-        }
-
-        Optional<Resource> resource = resourceRepository.findById(id);
-
-        if(resource.isEmpty()) {
-            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
-        }
-
-        Resource retResource = resource.get();
-        retResource.setIsAvailable(true);
-        retResource = resourceRepository.save(retResource);
-
-        if (retResource instanceof ResourceCPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceDTO(retResource);
-        } else if (retResource instanceof ResourceGPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceDTO(retResource);
-        } else {
-            throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
-        }*/
     }
 
     /**
@@ -313,24 +185,5 @@ public class ResourceController {
         }
 
         return resourceDTO;
-        /*Optional<Resource> resource = resourceRepository.findById(id);
-
-        if(resource.isEmpty()) {
-            throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
-        }
-
-        Resource retResource = resource.get();
-        retResource.setIsAvailable(false);
-        retResource = resourceRepository.save(retResource);
-
-        if (retResource instanceof ResourceCPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceDTO(retResource);
-        } else if (retResource instanceof ResourceGPU) {
-            resourceMessageHandler.sendUpdateResourceMessage(resourceService.getResourceMessageDTO(retResource));
-            return resourceService.getResourceDTO(retResource);
-        } else {
-            throw new IllegalArgumentException("Invalid resource type: " + retResource.getClass());
-        }*/
     }
 }

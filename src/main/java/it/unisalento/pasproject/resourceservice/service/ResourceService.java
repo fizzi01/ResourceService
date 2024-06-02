@@ -37,7 +37,7 @@ public class ResourceService {
 
     private final ResourceRepository resourceRepository;
 
-    private final int AVAILABILITY_TRESHOLD = 30;
+    private static final int AVAILABILITY_TRESHOLD = 30;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceService.class);
 
@@ -91,7 +91,7 @@ public class ResourceService {
                 Optional.of(scoreDTO.getScore()).ifPresent(resourceCPU::setSingleCoreScore);
                 Optional.of(scoreDTO.getMulticore_score()).ifPresent(resourceCPU::setMulticoreScore);
 
-                LOGGER.info("ResourceCpuDTO: " + resourceCPU.getSingleCoreScore());
+                LOGGER.info("ResourceCpuDTO: %s".formatted(resourceCPU.getSingleCoreScore()));
 
                 return resourceCPU;
             }
@@ -320,144 +320,152 @@ public class ResourceService {
 
         Resource retResource = resource.get();
 
-        if(resourceDTO instanceof ResourceCpuDTO resourceCpuDTO && retResource instanceof ResourceCPU resourceCPU) {
-            if(!resourceCpuDTO.getName().equals(resourceCPU.getName())) {
-                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceCpuDTO));
+        switch (resourceDTO) {
+            case ResourceCpuDTO resourceCpuDTO -> {
+                ResourceCPU resourceCPU = (ResourceCPU) retResource;
 
-                if (scoreDTO != null) {
-                    resourceCpuDTO.setSingleCoreScore(scoreDTO.getScore());
-                    resourceCpuDTO.setMulticoreScore(scoreDTO.getMulticore_score());
-                } else {
-                    return null;
+                if (!resourceCpuDTO.getName().equals(resourceCPU.getName())) {
+                    ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceCpuDTO));
+
+                    if (scoreDTO != null) {
+                        resourceCpuDTO.setSingleCoreScore(scoreDTO.getScore());
+                        resourceCpuDTO.setMulticoreScore(scoreDTO.getMulticore_score());
+                    } else {
+                        return null;
+                    }
+
+                    Optional.of(resourceCpuDTO.getSingleCoreScore()).ifPresent(resourceCPU::setSingleCoreScore);
+                    Optional.of(resourceCpuDTO.getMulticoreScore()).ifPresent(resourceCPU::setMulticoreScore);
                 }
 
-                Optional.of(resourceCpuDTO.getSingleCoreScore()).ifPresent(resourceCPU::setSingleCoreScore);
-                Optional.of(resourceCpuDTO.getMulticoreScore()).ifPresent(resourceCPU::setMulticoreScore);
+                Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceCPU::setName);
+                Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceCPU::setType);
+                Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceCPU::setBrand);
+                Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceCPU::setModel);
+                Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceCPU::setGreenEnergyType);
+                checkTimeDifference(resourceDTO.getAvailability());
+                Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceCPU::setAvailability);
+                Optional.of(resourceDTO.getKWh()).ifPresent(retResource::setKWh);
+                Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
+                Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceCPU::setIsAvailable);
+                Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceCPU::setCurrentTaskId);
+
+                Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
+                Optional.of(resourceCpuDTO.getCores()).ifPresent(resourceCPU::setCores);
+                Optional.of(resourceCpuDTO.getThreads()).ifPresent(resourceCPU::setThreads);
+                Optional.of(resourceCpuDTO.getBaseFrequency()).ifPresent(resourceCPU::setBaseFrequency);
+                Optional.of(resourceCpuDTO.getMaxFrequency()).ifPresent(resourceCPU::setMaxFrequency);
+                Optional.of(resourceCpuDTO.getCacheSize()).ifPresent(resourceCPU::setCacheSize);
+                Optional.of(resourceCpuDTO.getTdp()).ifPresent(resourceCPU::setTdp);
+                Optional.of(resourceCpuDTO.isHyperThreading()).ifPresent(resourceCPU::setHyperThreading);
+                Optional.of(resourceCpuDTO.isOverclockingSupport()).ifPresent(resourceCPU::setOverclockingSupport);
+
+                resourceCPU = resourceRepository.save(resourceCPU);
+
+                resourceMessageHandler.sendUpdateResourceMessage(getResourceMessageDTO(resourceCPU));
+
+                return getResourceDTO(resourceCPU);
             }
+            case ResourceGpuDTO resourceGpuDTO -> {
+                ResourceGPU resourceGPU = (ResourceGPU) retResource;
 
-            Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceCPU::setName);
-            Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceCPU::setType);
-            Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceCPU::setBrand);
-            Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceCPU::setModel);
-            Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceCPU::setGreenEnergyType);
-            checkTimeDifference(resourceDTO.getAvailability());
-            Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceCPU::setAvailability);
-            Optional.of(resourceDTO.getKWh()).ifPresent(retResource::setKWh);
-            Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
-            Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceCPU::setIsAvailable);
-            Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceCPU::setCurrentTaskId);
+                if (!resourceGpuDTO.getName().equals(resourceGPU.getName())) {
+                    ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceGpuDTO));
 
-            Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
-            Optional.of(resourceCpuDTO.getCores()).ifPresent(resourceCPU::setCores);
-            Optional.of(resourceCpuDTO.getThreads()).ifPresent(resourceCPU::setThreads);
-            Optional.of(resourceCpuDTO.getBaseFrequency()).ifPresent(resourceCPU::setBaseFrequency);
-            Optional.of(resourceCpuDTO.getMaxFrequency()).ifPresent(resourceCPU::setMaxFrequency);
-            Optional.of(resourceCpuDTO.getCacheSize()).ifPresent(resourceCPU::setCacheSize);
-            Optional.of(resourceCpuDTO.getTdp()).ifPresent(resourceCPU::setTdp);
-            Optional.of(resourceCpuDTO.isHyperThreading()).ifPresent(resourceCPU::setHyperThreading);
-            Optional.of(resourceCpuDTO.isOverclockingSupport()).ifPresent(resourceCPU::setOverclockingSupport);
+                    if (scoreDTO != null) {
+                        resourceGpuDTO.setOpenclScore(scoreDTO.getOpencl());
+                        resourceGpuDTO.setVulkanScore(scoreDTO.getVulkan());
+                        resourceGpuDTO.setCudaScore(scoreDTO.getCuda());
+                    } else {
+                        return null;
+                    }
 
-            resourceCPU = resourceRepository.save(resourceCPU);
-
-            resourceMessageHandler.sendUpdateResourceMessage(getResourceMessageDTO(resourceCPU));
-
-            return getResourceDTO(resourceCPU);
-
-        } else if (retResource instanceof ResourceGPU resourceGPU && resourceDTO instanceof ResourceGpuDTO resourceGpuDTO) {
-            if(!resourceGpuDTO.getName().equals(resourceGPU.getName())) {
-                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceGpuDTO));
-
-                if (scoreDTO != null) {
-                    resourceGpuDTO.setOpenclScore(scoreDTO.getOpencl());
-                    resourceGpuDTO.setVulkanScore(scoreDTO.getVulkan());
-                    resourceGpuDTO.setCudaScore(scoreDTO.getCuda());
-                } else {
-                    return null;
+                    Optional.of(resourceGpuDTO.getOpenclScore()).ifPresent(resourceGPU::setOpenclScore);
+                    Optional.of(resourceGpuDTO.getVulkanScore()).ifPresent(resourceGPU::setVulkanScore);
+                    Optional.of(resourceGpuDTO.getCudaScore()).ifPresent(resourceGPU::setCudaScore);
                 }
 
-                Optional.of(resourceGpuDTO.getOpenclScore()).ifPresent(resourceGPU::setOpenclScore);
-                Optional.of(resourceGpuDTO.getVulkanScore()).ifPresent(resourceGPU::setVulkanScore);
-                Optional.of(resourceGpuDTO.getCudaScore()).ifPresent(resourceGPU::setCudaScore);
+                Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceGPU::setName);
+                Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceGPU::setType);
+                Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceGPU::setBrand);
+                Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceGPU::setModel);
+                Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceGPU::setGreenEnergyType);
+                checkTimeDifference(resourceDTO.getAvailability());
+                Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceGPU::setAvailability);
+                Optional.of(resourceDTO.getKWh()).ifPresent(resourceGPU::setKWh);
+                Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
+                Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceGPU::setIsAvailable);
+                Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceGPU::setCurrentTaskId);
+
+                Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
+                Optional.ofNullable(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
+                Optional.of(resourceGpuDTO.getVramSize()).ifPresent(resourceGPU::setVramSize);
+                Optional.of(resourceGpuDTO.getCoreClock()).ifPresent(resourceGPU::setCoreClock);
+                Optional.of(resourceGpuDTO.getBoostClock()).ifPresent(resourceGPU::setBoostClock);
+                Optional.ofNullable(resourceGpuDTO.getMemoryClock()).ifPresent(resourceGPU::setMemoryClock);
+                Optional.of(resourceGpuDTO.getTdp()).ifPresent(resourceGPU::setTdp);
+                Optional.of(resourceGpuDTO.isRayTracingSupport()).ifPresent(resourceGPU::setRayTracingSupport);
+                Optional.of(resourceGpuDTO.isDlssSupport()).ifPresent(resourceGPU::setDlssSupport);
+
+                resourceGPU = resourceRepository.save(resourceGPU);
+
+                resourceMessageHandler.sendUpdateResourceMessage(getResourceMessageDTO(resourceGPU));
+
+                return getResourceDTO(resourceGPU);
             }
+            case ResourceSoCDTO resourceSoCDTO -> {
+                ResourceSoC resourceSoC = (ResourceSoC) retResource;
 
-            Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceGPU::setName);
-            Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceGPU::setType);
-            Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceGPU::setBrand);
-            Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceGPU::setModel);
-            Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceGPU::setGreenEnergyType);
-            checkTimeDifference(resourceDTO.getAvailability());
-            Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceGPU::setAvailability);
-            Optional.of(resourceDTO.getKWh()).ifPresent(resourceGPU::setKWh);
-            Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
-            Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceGPU::setIsAvailable);
-            Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceGPU::setCurrentTaskId);
+                if (!resourceSoCDTO.getName().equals(resourceSoC.getName())) {
+                    ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceSoCDTO));
 
-            Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
-            Optional.ofNullable(resourceGpuDTO.getVramType()).ifPresent(resourceGPU::setVramType);
-            Optional.of(resourceGpuDTO.getVramSize()).ifPresent(resourceGPU::setVramSize);
-            Optional.of(resourceGpuDTO.getCoreClock()).ifPresent(resourceGPU::setCoreClock);
-            Optional.of(resourceGpuDTO.getBoostClock()).ifPresent(resourceGPU::setBoostClock);
-            Optional.ofNullable(resourceGpuDTO.getMemoryClock()).ifPresent(resourceGPU::setMemoryClock);
-            Optional.of(resourceGpuDTO.getTdp()).ifPresent(resourceGPU::setTdp);
-            Optional.of(resourceGpuDTO.isRayTracingSupport()).ifPresent(resourceGPU::setRayTracingSupport);
-            Optional.of(resourceGpuDTO.isDlssSupport()).ifPresent(resourceGPU::setDlssSupport);
+                    if (scoreDTO != null) {
+                        resourceSoCDTO.setSingleCoreScore(scoreDTO.getScore());
+                        resourceSoCDTO.setMulticoreScore(scoreDTO.getMulticore_score());
+                        resourceSoCDTO.setOpenclScore(scoreDTO.getOpencl());
+                        resourceSoCDTO.setVulkanScore(scoreDTO.getVulkan());
+                        resourceSoCDTO.setCudaScore(scoreDTO.getCuda());
+                    } else {
+                        return null;
+                    }
 
-            resourceGPU = resourceRepository.save(resourceGPU);
-
-            resourceMessageHandler.sendUpdateResourceMessage(getResourceMessageDTO(resourceGPU));
-
-            return getResourceDTO(resourceGPU);
-
-        } else if (retResource instanceof ResourceSoC resourceSoC && resourceDTO instanceof ResourceSoCDTO resourceSoCDTO) {
-            if(!resourceSoCDTO.getName().equals(resourceSoC.getName())) {
-                ScoreDTO scoreDTO = resourceMessageHandler.requestResourceScore(getScoreMessageDTO(resourceSoCDTO));
-
-                if (scoreDTO != null) {
-                    resourceSoCDTO.setSingleCoreScore(scoreDTO.getScore());
-                    resourceSoCDTO.setMulticoreScore(scoreDTO.getMulticore_score());
-                    resourceSoCDTO.setOpenclScore(scoreDTO.getOpencl());
-                    resourceSoCDTO.setVulkanScore(scoreDTO.getVulkan());
-                    resourceSoCDTO.setCudaScore(scoreDTO.getCuda());
-                } else {
-                    return null;
+                    Optional.of(resourceSoCDTO.getSingleCoreScore()).ifPresent(resourceSoC::setSingleCoreScore);
+                    Optional.of(resourceSoCDTO.getMulticoreScore()).ifPresent(resourceSoC::setMulticoreScore);
+                    Optional.of(resourceSoCDTO.getOpenclScore()).ifPresent(resourceSoC::setOpenclScore);
+                    Optional.of(resourceSoCDTO.getVulkanScore()).ifPresent(resourceSoC::setVulkanScore);
+                    Optional.of(resourceSoCDTO.getCudaScore()).ifPresent(resourceSoC::setCudaScore);
                 }
 
-                Optional.of(resourceSoCDTO.getSingleCoreScore()).ifPresent(resourceSoC::setSingleCoreScore);
-                Optional.of(resourceSoCDTO.getMulticoreScore()).ifPresent(resourceSoC::setMulticoreScore);
-                Optional.of(resourceSoCDTO.getOpenclScore()).ifPresent(resourceSoC::setOpenclScore);
-                Optional.of(resourceSoCDTO.getVulkanScore()).ifPresent(resourceSoC::setVulkanScore);
-                Optional.of(resourceSoCDTO.getCudaScore()).ifPresent(resourceSoC::setCudaScore);
+                Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceSoC::setName);
+                Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceSoC::setType);
+                Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceSoC::setBrand);
+                Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceSoC::setModel);
+                Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceSoC::setGreenEnergyType);
+                checkTimeDifference(resourceDTO.getAvailability());
+                Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceSoC::setAvailability);
+                Optional.of(resourceDTO.getKWh()).ifPresent(resourceSoC::setKWh);
+                Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceSoC::setMemberEmail);
+                Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceSoC::setIsAvailable);
+                Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceSoC::setCurrentTaskId);
+
+                Optional.ofNullable(resourceSoCDTO.getArchitecture()).ifPresent(resourceSoC::setArchitecture);
+                Optional.of(resourceSoCDTO.getCpuCores()).ifPresent(resourceSoC::setCpuCores);
+                Optional.of(resourceSoCDTO.getGpuCores()).ifPresent(resourceSoC::setGpuCores);
+                Optional.of(resourceSoCDTO.getCpuBaseFrequency()).ifPresent(resourceSoC::setCpuBaseFrequency);
+                Optional.of(resourceSoCDTO.getCpuMaxFrequency()).ifPresent(resourceSoC::setCpuMaxFrequency);
+                Optional.of(resourceSoCDTO.getGpuBaseFrequency()).ifPresent(resourceSoC::setGpuBaseFrequency);
+                Optional.of(resourceSoCDTO.getGpuMaxFrequency()).ifPresent(resourceSoC::setGpuMaxFrequency);
+                Optional.of(resourceSoCDTO.getTdp()).ifPresent(resourceSoC::setTdp);
+
+                resourceSoC = resourceRepository.save(resourceSoC);
+
+                resourceMessageHandler.sendUpdateResourceMessage(getResourceMessageDTO(resourceSoC));
+
+                return getResourceDTO(resourceSoC);
             }
-
-            Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceSoC::setName);
-            Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceSoC::setType);
-            Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceSoC::setBrand);
-            Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceSoC::setModel);
-            Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceSoC::setGreenEnergyType);
-            checkTimeDifference(resourceDTO.getAvailability());
-            Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceSoC::setAvailability);
-            Optional.of(resourceDTO.getKWh()).ifPresent(resourceSoC::setKWh);
-            Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceSoC::setMemberEmail);
-            Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceSoC::setIsAvailable);
-            Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceSoC::setCurrentTaskId);
-
-            Optional.ofNullable(resourceSoCDTO.getArchitecture()).ifPresent(resourceSoC::setArchitecture);
-            Optional.of(resourceSoCDTO.getCpuCores()).ifPresent(resourceSoC::setCpuCores);
-            Optional.of(resourceSoCDTO.getGpuCores()).ifPresent(resourceSoC::setGpuCores);
-            Optional.of(resourceSoCDTO.getCpuBaseFrequency()).ifPresent(resourceSoC::setCpuBaseFrequency);
-            Optional.of(resourceSoCDTO.getCpuMaxFrequency()).ifPresent(resourceSoC::setCpuMaxFrequency);
-            Optional.of(resourceSoCDTO.getGpuBaseFrequency()).ifPresent(resourceSoC::setGpuBaseFrequency);
-            Optional.of(resourceSoCDTO.getGpuMaxFrequency()).ifPresent(resourceSoC::setGpuMaxFrequency);
-            Optional.of(resourceSoCDTO.getTdp()).ifPresent(resourceSoC::setTdp);
-
-            resourceSoC = resourceRepository.save(resourceSoC);
-
-            resourceMessageHandler.sendUpdateResourceMessage(getResourceMessageDTO(resourceSoC));
-
-            return getResourceDTO(resourceSoC);
-
-        } else {
-            return null;
+            default -> {
+                return null;
+            }
         }
     }
 
@@ -526,6 +534,7 @@ public class ResourceService {
                 Optional.of(resourceSoC.getCudaScore()).ifPresent(resourceMessageDTO::setCudaScore);
             }
             default -> {
+                return null;
             }
         }
 

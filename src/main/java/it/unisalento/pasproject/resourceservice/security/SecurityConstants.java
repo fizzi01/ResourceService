@@ -5,6 +5,9 @@ package it.unisalento.pasproject.resourceservice.security;
  * It includes a JWT_SECRET constant that is used for signing JSON Web Tokens (JWTs).
  */
 public class SecurityConstants {
+
+    public SecurityConstants() {}
+
     /**
      * The secret key used for signing JWTs.
      * This should be kept secret and secure.
