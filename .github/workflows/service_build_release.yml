@@ -107,7 +107,10 @@ jobs:
           else
             echo "docker-compose.yml not found, skipping update."
           fi
-          
+
+      - name: Pull latest changes
+        run: |
+          git pull origin ${{ github.ref_name }}
 
       - name: Commit and push changes
         run: |
