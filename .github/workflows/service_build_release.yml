@@ -137,7 +137,7 @@ jobs:
         run: |
           ls -l
           echo "Renaming artifact jar"
-          mv /build/libs/*.jar build/libs/${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}-${{  needs.prepare_release.outputs.new-tag }}.jar
+          mv build/libs/*.jar build/libs/${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}-${{  needs.prepare_release.outputs.new-tag }}.jar
           ls -l
 
       - name: Save Changelog to File
@@ -170,7 +170,7 @@ jobs:
           fi
 
           echo "Deploying service jar to server"
-          cd /build/libs
+          cd build/libs
           artifact_name=$(ls *.jar)
           
           echo "$SSH_KEY" > key.pem
