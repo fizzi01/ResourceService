@@ -177,6 +177,8 @@ jobs:
           echo "Deploying service jar to server"
           cd build/libs
           artifact_name=$(ls *.jar)
+          cd ../..
+          cp build/libs/$artifact_name $artifact_name
           
           echo "$SSH_KEY" > key.pem
           chmod 600 key.pem
