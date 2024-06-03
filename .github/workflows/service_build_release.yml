@@ -147,15 +147,15 @@ jobs:
 
       - name: Save Changelog to File
         run: |
-          echo "${{ needs.prepare_release.outputs.changelog }}" | sed '/- PR: #0/d' > changelog.md
+          echo "${{ steps.changelog.outputs.changelog }}" | sed '/- PR: #0/d' > changelog.md
           cat changelog.md
         id: save_changelog
 
       - name: Creating Release
         uses: ncipollo/release-action@v1.14.0
         with:
-          tag: ${{ needs.prepare_release.outputs.new-tag }}
-          name: Release ${{ needs.prepare_release.outputs.new-tag }}
+          tag: ${{ env.NEW_TAG }}
+          name: Release ${{ env.NEW_TAG }}
           bodyFile: changelog.md
           makeLatest: "latest"
         env:
