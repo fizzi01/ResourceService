@@ -5,6 +5,7 @@ import it.unisalento.pasproject.resourceservice.dto.*;
 import it.unisalento.pasproject.resourceservice.exceptions.ExistingResourceException;
 import it.unisalento.pasproject.resourceservice.exceptions.ResourceNotFoundException;
 import it.unisalento.pasproject.resourceservice.repositories.ResourceRepository;
+import it.unisalento.pasproject.resourceservice.service.ResourceQueryFilters;
 import it.unisalento.pasproject.resourceservice.service.ResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,32 +69,18 @@ public class ResourceController {
     /**
      * Returns resources that match the given filter criteria.
      *
-     * @param type the type of the resources to return
-     * @param name the name of the resources to return
-     * @param greenEnergyType the green energy type of the resources to return
-     * @param from the start date of the resources to return
-     * @param to the end date of the resources to return
-     * @param kWh the kWh of the resources to return
-     * @param memberMail the member mail of the resources to return
-     * @param isAvailable whether the resources to return should be available
+     * @param resourceQueryFilters the type of the resources to return
      * @return a ResourceListDTO containing the matching resources
      * @throws ResourceNotFoundException if no resources match the given criteria
      */
     @GetMapping("/find")
     @Secured(ROLE_MEMBRO)
-    public ResourceListDTO getByFilter(@RequestParam() String type,
-                                       @RequestParam(required = false) String name,
-                                       @RequestParam(required = false) String greenEnergyType,
-                                       @RequestParam(required = false) LocalDateTime from,
-                                       @RequestParam(required = false) LocalDateTime to,
-                                       @RequestParam(required = false) Double kWh,
-                                       @RequestParam(required = false) String memberMail,
-                                       @RequestParam(required = false) Boolean isAvailable) throws ResourceNotFoundException {
+    public ResourceListDTO getByFilter(@ModelAttribute ResourceQueryFilters resourceQueryFilters) throws ResourceNotFoundException {
         ResourceListDTO resourceListDTO = new ResourceListDTO();
         List<ResourceDTO> list = new ArrayList<>();
         resourceListDTO.setResourcesList(list);
 
-        List<Resource> resources = resourceService.findResources(name, type, greenEnergyType, from, to, kWh, memberMail, isAvailable);
+        List<Resource> resources = resourceService.findResources(resourceQueryFilters);
 
         if (resources.isEmpty())
             throw new ResourceNotFoundException("No resources found with the given criteria.");

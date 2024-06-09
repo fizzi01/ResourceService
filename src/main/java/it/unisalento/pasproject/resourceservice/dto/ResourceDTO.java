@@ -60,6 +60,10 @@ public abstract class ResourceDTO {
      */
     private String greenEnergyType;
 
+    private String country;
+    private String region;
+    private String city;
+
     /**
      * The number of hours the resource is available.
      */
