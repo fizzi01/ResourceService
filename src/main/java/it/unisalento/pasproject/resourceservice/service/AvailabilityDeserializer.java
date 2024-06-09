@@ -21,27 +21,45 @@ public class AvailabilityDeserializer extends JsonDeserializer<List<Availability
 
         if (treeNode instanceof ArrayNode arrayNode) {
             for (JsonNode node : arrayNode) {
-                var availability = new Availability();
-
-                var dayOfWeekString = node.get("dayOfWeek").asText();
-                if (!dayOfWeekString.isEmpty()) {
-                    availability.setDayOfWeek(DayOfWeek.valueOf(dayOfWeekString.toUpperCase()));
-                }
-
-                var startTimeString = node.get("startTime").asText();
-                if (!startTimeString.isEmpty()) {
-                    availability.setStartTime(LocalTime.parse(startTimeString));
-                }
-
-                var endTimeString = node.get("endTime").asText();
-                if (!endTimeString.isEmpty()) {
-                    availability.setEndTime(LocalTime.parse(endTimeString));
-                }
-
+                var availability = deserializeAvailability(node);
                 availabilityList.add(availability);
             }
         }
 
         return availabilityList;
+    }
+
+    private Availability deserializeAvailability(JsonNode node) {
+        var availability = new Availability();
+
+        availability.setDayOfWeek(deserializeDayOfWeek(node));
+        availability.setStartTime(deserializeStartTime(node));
+        availability.setEndTime(deserializeEndTime(node));
+
+        return availability;
+    }
+
+    private DayOfWeek deserializeDayOfWeek(JsonNode node) {
+        var dayOfWeekString = node.get("dayOfWeek").asText();
+        if (!dayOfWeekString.isEmpty()) {
+            return DayOfWeek.valueOf(dayOfWeekString.toUpperCase());
+        }
+        return null;
+    }
+
+    private LocalTime deserializeStartTime(JsonNode node) {
+        var startTimeString = node.get("startTime").asText();
+        if (!startTimeString.isEmpty()) {
+            return LocalTime.parse(startTimeString);
+        }
+        return null;
+    }
+
+    private LocalTime deserializeEndTime(JsonNode node) {
+        var endTimeString = node.get("endTime").asText();
+        if (!endTimeString.isEmpty()) {
+            return LocalTime.parse(endTimeString);
+        }
+        return null;
     }
 }

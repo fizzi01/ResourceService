@@ -104,20 +104,6 @@ public class ResourceService {
                 ResourceCPU resourceCPU = (ResourceCPU) resourceFactory.getResourceType(ResourceFactory.ResourceType.CPU);
 
                 // Set common properties
-                /*Optional.ofNullable(resourceCpuDTO.getName()).ifPresent(resourceCPU::setName);
-                Optional.ofNullable(resourceCpuDTO.getType()).ifPresent(resourceCPU::setType);
-                Optional.ofNullable(resourceCpuDTO.getBrand()).ifPresent(resourceCPU::setBrand);
-                Optional.ofNullable(resourceCpuDTO.getModel()).ifPresent(resourceCPU::setModel);
-                Optional.ofNullable(resourceCpuDTO.getGreenEnergyType()).ifPresent(resourceCPU::setGreenEnergyType);
-                Optional.ofNullable(resourceCpuDTO.getCountry()).ifPresent(resourceCPU::setCountry);
-                Optional.ofNullable(resourceCpuDTO.getRegion()).ifPresent(resourceCPU::setRegion);
-                Optional.ofNullable(resourceCpuDTO.getCity()).ifPresent(resourceCPU::setCity);
-                checkTimeDifference(resourceCpuDTO.getAvailability());
-                Optional.ofNullable(resourceCpuDTO.getAvailability()).ifPresent(resourceCPU::setAvailability);
-                Optional.of(resourceCpuDTO.getKWh()).ifPresent(resourceCPU::setKWh);
-                Optional.ofNullable(resourceCpuDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
-                Optional.ofNullable(resourceCpuDTO.getIsAvailable()).ifPresent(resourceCPU::setIsAvailable);
-                Optional.ofNullable(resourceCpuDTO.getCurrentTaskId()).ifPresent(resourceCPU::setCurrentTaskId);*/
                 resourceCPU = (ResourceCPU) setCommonAttributes(resourceCPU, resourceCpuDTO);
 
                 // Set CPU-specific properties
@@ -147,20 +133,6 @@ public class ResourceService {
                 ResourceGPU resourceGPU = (ResourceGPU) resourceFactory.getResourceType(ResourceFactory.ResourceType.GPU);
 
                 // Set common properties
-                /*Optional.ofNullable(resourceGpuDTO.getName()).ifPresent(resourceGPU::setName);
-                Optional.ofNullable(resourceGpuDTO.getType()).ifPresent(resourceGPU::setType);
-                Optional.ofNullable(resourceGpuDTO.getBrand()).ifPresent(resourceGPU::setBrand);
-                Optional.ofNullable(resourceGpuDTO.getModel()).ifPresent(resourceGPU::setModel);
-                Optional.ofNullable(resourceGpuDTO.getGreenEnergyType()).ifPresent(resourceGPU::setGreenEnergyType);
-                Optional.ofNullable(resourceGpuDTO.getCountry()).ifPresent(resourceGPU::setCountry);
-                Optional.ofNullable(resourceGpuDTO.getRegion()).ifPresent(resourceGPU::setRegion);
-                Optional.ofNullable(resourceGpuDTO.getCity()).ifPresent(resourceGPU::setCity);
-                checkTimeDifference(resourceGpuDTO.getAvailability());
-                Optional.ofNullable(resourceGpuDTO.getAvailability()).ifPresent(resourceGPU::setAvailability);
-                Optional.of(resourceGpuDTO.getKWh()).ifPresent(resourceGPU::setKWh);
-                Optional.ofNullable(resourceGpuDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
-                Optional.ofNullable(resourceGpuDTO.getIsAvailable()).ifPresent(resourceGPU::setIsAvailable);
-                Optional.ofNullable(resourceGpuDTO.getCurrentTaskId()).ifPresent(resourceGPU::setCurrentTaskId);*/
                 resourceGPU = (ResourceGPU) setCommonAttributes(resourceGPU, resourceGpuDTO);
 
                 // Set GPU-specific properties
@@ -189,20 +161,6 @@ public class ResourceService {
                 ResourceSoC resourceSoC = (ResourceSoC) resourceFactory.getResourceType(ResourceFactory.ResourceType.SOC);
 
                 // Set common properties
-                /*Optional.ofNullable(resourceSoCDTO.getName()).ifPresent(resourceSoC::setName);
-                Optional.ofNullable(resourceSoCDTO.getType()).ifPresent(resourceSoC::setType);
-                Optional.ofNullable(resourceSoCDTO.getBrand()).ifPresent(resourceSoC::setBrand);
-                Optional.ofNullable(resourceSoCDTO.getModel()).ifPresent(resourceSoC::setModel);
-                Optional.ofNullable(resourceSoCDTO.getGreenEnergyType()).ifPresent(resourceSoC::setGreenEnergyType);
-                Optional.ofNullable(resourceSoCDTO.getCountry()).ifPresent(resourceSoC::setCountry);
-                Optional.ofNullable(resourceSoCDTO.getRegion()).ifPresent(resourceSoC::setRegion);
-                Optional.ofNullable(resourceSoCDTO.getCity()).ifPresent(resourceSoC::setCity);
-                checkTimeDifference(resourceSoCDTO.getAvailability());
-                Optional.ofNullable(resourceSoCDTO.getAvailability()).ifPresent(resourceSoC::setAvailability);
-                Optional.of(resourceSoCDTO.getKWh()).ifPresent(resourceSoC::setKWh);
-                Optional.ofNullable(resourceSoCDTO.getMemberEmail()).ifPresent(resourceSoC::setMemberEmail);
-                Optional.ofNullable(resourceSoCDTO.getIsAvailable()).ifPresent(resourceSoC::setIsAvailable);
-                Optional.ofNullable(resourceSoCDTO.getCurrentTaskId()).ifPresent(resourceSoC::setCurrentTaskId);*/
                 resourceSoC = (ResourceSoC) setCommonAttributes(resourceSoC, resourceSoCDTO);
 
                 // Set SoC-specific properties
@@ -247,20 +205,6 @@ public class ResourceService {
                 ResourceCpuDTO resourceCpuDTO = (ResourceCpuDTO) resourceDTOFactory.getResourceDTOType(ResourceDTOFactory.ResourceDTOType.CPU);
 
                 // Set common properties
-                /*Optional.ofNullable(resourceCPU.getId()).ifPresent(resourceCpuDTO::setId);
-                Optional.ofNullable(resourceCPU.getName()).ifPresent(resourceCpuDTO::setName);
-                Optional.ofNullable(resourceCPU.getType()).ifPresent(resourceCpuDTO::setType);
-                Optional.ofNullable(resourceCPU.getBrand()).ifPresent(resourceCpuDTO::setBrand);
-                Optional.ofNullable(resourceCPU.getModel()).ifPresent(resourceCpuDTO::setModel);
-                Optional.ofNullable(resourceCPU.getGreenEnergyType()).ifPresent(resourceCpuDTO::setGreenEnergyType);
-                Optional.ofNullable(resourceCPU.getCountry()).ifPresent(resourceCpuDTO::setCountry);
-                Optional.ofNullable(resourceCPU.getRegion()).ifPresent(resourceCpuDTO::setRegion);
-                Optional.ofNullable(resourceCPU.getCity()).ifPresent(resourceCpuDTO::setCity);
-                Optional.ofNullable(resourceCPU.getAvailability()).ifPresent(resourceCpuDTO::setAvailability);
-                Optional.of(resourceCPU.getKWh()).ifPresent(resourceCpuDTO::setKWh);
-                Optional.ofNullable(resourceCPU.getMemberEmail()).ifPresent(resourceCpuDTO::setMemberEmail);
-                Optional.ofNullable(resourceCPU.getIsAvailable()).ifPresent(resourceCpuDTO::setIsAvailable);
-                Optional.ofNullable(resourceCPU.getCurrentTaskId()).ifPresent(resourceCpuDTO::setCurrentTaskId);*/
                 resourceCpuDTO = (ResourceCpuDTO) setCommonAttributes(resourceCpuDTO, resourceCPU);
 
                 // Set CPU-specific properties
@@ -282,20 +226,6 @@ public class ResourceService {
                 ResourceGpuDTO resourceGpuDTO = (ResourceGpuDTO) resourceDTOFactory.getResourceDTOType(ResourceDTOFactory.ResourceDTOType.GPU);
 
                 // Set common properties
-                /*Optional.ofNullable(resourceGPU.getId()).ifPresent(resourceGpuDTO::setId);
-                Optional.ofNullable(resourceGPU.getName()).ifPresent(resourceGpuDTO::setName);
-                Optional.ofNullable(resourceGPU.getType()).ifPresent(resourceGpuDTO::setType);
-                Optional.ofNullable(resourceGPU.getBrand()).ifPresent(resourceGpuDTO::setBrand);
-                Optional.ofNullable(resourceGPU.getModel()).ifPresent(resourceGpuDTO::setModel);
-                Optional.ofNullable(resourceGPU.getGreenEnergyType()).ifPresent(resourceGpuDTO::setGreenEnergyType);
-                Optional.ofNullable(resourceGPU.getCountry()).ifPresent(resourceGpuDTO::setCountry);
-                Optional.ofNullable(resourceGPU.getRegion()).ifPresent(resourceGpuDTO::setRegion);
-                Optional.ofNullable(resourceGPU.getCity()).ifPresent(resourceGpuDTO::setCity);
-                Optional.ofNullable(resourceGPU.getAvailability()).ifPresent(resourceGpuDTO::setAvailability);
-                Optional.of(resourceGPU.getKWh()).ifPresent(resourceGpuDTO::setKWh);
-                Optional.ofNullable(resourceGPU.getMemberEmail()).ifPresent(resourceGpuDTO::setMemberEmail);
-                Optional.ofNullable(resourceGPU.getIsAvailable()).ifPresent(resourceGpuDTO::setIsAvailable);
-                Optional.ofNullable(resourceGPU.getCurrentTaskId()).ifPresent(resourceGpuDTO::setCurrentTaskId);*/
                 resourceGpuDTO = (ResourceGpuDTO) setCommonAttributes(resourceGpuDTO, resourceGPU);
 
                 // Set GPU-specific properties
@@ -318,20 +248,6 @@ public class ResourceService {
                 ResourceSoCDTO resourceSoCDTO = (ResourceSoCDTO) resourceDTOFactory.getResourceDTOType(ResourceDTOFactory.ResourceDTOType.SOC);
 
                 // Set common properties
-                /*Optional.ofNullable(resourceSoC.getId()).ifPresent(resourceSoCDTO::setId);
-                Optional.ofNullable(resourceSoC.getName()).ifPresent(resourceSoCDTO::setName);
-                Optional.ofNullable(resourceSoC.getType()).ifPresent(resourceSoCDTO::setType);
-                Optional.ofNullable(resourceSoC.getBrand()).ifPresent(resourceSoCDTO::setBrand);
-                Optional.ofNullable(resourceSoC.getModel()).ifPresent(resourceSoCDTO::setModel);
-                Optional.ofNullable(resourceSoC.getGreenEnergyType()).ifPresent(resourceSoCDTO::setGreenEnergyType);
-                Optional.ofNullable(resourceSoC.getCountry()).ifPresent(resourceSoCDTO::setCountry);
-                Optional.ofNullable(resourceSoC.getRegion()).ifPresent(resourceSoCDTO::setRegion);
-                Optional.ofNullable(resourceSoC.getCity()).ifPresent(resourceSoCDTO::setCity);
-                Optional.ofNullable(resourceSoC.getAvailability()).ifPresent(resourceSoCDTO::setAvailability);
-                Optional.of(resourceSoC.getKWh()).ifPresent(resourceSoCDTO::setKWh);
-                Optional.ofNullable(resourceSoC.getMemberEmail()).ifPresent(resourceSoCDTO::setMemberEmail);
-                Optional.ofNullable(resourceSoC.getIsAvailable()).ifPresent(resourceSoCDTO::setIsAvailable);
-                Optional.ofNullable(resourceSoC.getCurrentTaskId()).ifPresent(resourceSoCDTO::setCurrentTaskId);*/
                 resourceSoCDTO = (ResourceSoCDTO) setCommonAttributes(resourceSoCDTO, resourceSoC);
 
                 // Set SoC-specific properties
@@ -400,20 +316,6 @@ public class ResourceService {
                     Optional.of(resourceCpuDTO.getMulticoreScore()).ifPresent(resourceCPU::setMulticoreScore);
                 }
 
-                /*Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceCPU::setName);
-                Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceCPU::setType);
-                Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceCPU::setBrand);
-                Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceCPU::setModel);
-                Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceCPU::setGreenEnergyType);
-                Optional.ofNullable(resourceDTO.getCountry()).ifPresent(resourceCPU::setCountry);
-                Optional.ofNullable(resourceDTO.getRegion()).ifPresent(resourceCPU::setRegion);
-                Optional.ofNullable(resourceDTO.getCity()).ifPresent(resourceCPU::setCity);
-                checkTimeDifference(resourceDTO.getAvailability());
-                Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceCPU::setAvailability);
-                Optional.of(resourceDTO.getKWh()).ifPresent(retResource::setKWh);
-                Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceCPU::setMemberEmail);
-                Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceCPU::setIsAvailable);
-                Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceCPU::setCurrentTaskId);*/
                 resourceCPU = (ResourceCPU) setCommonAttributes(resourceCPU, resourceCpuDTO);
 
                 Optional.ofNullable(resourceCpuDTO.getArchitecture()).ifPresent(resourceCPU::setArchitecture);
@@ -451,20 +353,6 @@ public class ResourceService {
                     Optional.of(resourceGpuDTO.getCudaScore()).ifPresent(resourceGPU::setCudaScore);
                 }
 
-                /*Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceGPU::setName);
-                Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceGPU::setType);
-                Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceGPU::setBrand);
-                Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceGPU::setModel);
-                Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceGPU::setGreenEnergyType);
-                Optional.ofNullable(resourceDTO.getCountry()).ifPresent(resourceGPU::setCountry);
-                Optional.ofNullable(resourceDTO.getRegion()).ifPresent(resourceGPU::setRegion);
-                Optional.ofNullable(resourceDTO.getCity()).ifPresent(resourceGPU::setCity);
-                checkTimeDifference(resourceDTO.getAvailability());
-                Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceGPU::setAvailability);
-                Optional.of(resourceDTO.getKWh()).ifPresent(resourceGPU::setKWh);
-                Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceGPU::setMemberEmail);
-                Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceGPU::setIsAvailable);
-                Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceGPU::setCurrentTaskId);*/
                 resourceGPU = (ResourceGPU) setCommonAttributes(resourceGPU, resourceGpuDTO);
 
                 Optional.ofNullable(resourceGpuDTO.getArchitecture()).ifPresent(resourceGPU::setArchitecture);
@@ -506,20 +394,6 @@ public class ResourceService {
                     Optional.of(resourceSoCDTO.getCudaScore()).ifPresent(resourceSoC::setCudaScore);
                 }
 
-                /*Optional.ofNullable(resourceDTO.getName()).ifPresent(resourceSoC::setName);
-                Optional.ofNullable(resourceDTO.getType()).ifPresent(resourceSoC::setType);
-                Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resourceSoC::setBrand);
-                Optional.ofNullable(resourceDTO.getModel()).ifPresent(resourceSoC::setModel);
-                Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resourceSoC::setGreenEnergyType);
-                Optional.ofNullable(resourceDTO.getCountry()).ifPresent(resourceSoC::setCountry);
-                Optional.ofNullable(resourceDTO.getRegion()).ifPresent(resourceSoC::setRegion);
-                Optional.ofNullable(resourceDTO.getCity()).ifPresent(resourceSoC::setCity);
-                checkTimeDifference(resourceDTO.getAvailability());
-                Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resourceSoC::setAvailability);
-                Optional.of(resourceDTO.getKWh()).ifPresent(resourceSoC::setKWh);
-                Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resourceSoC::setMemberEmail);
-                Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resourceSoC::setIsAvailable);
-                Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resourceSoC::setCurrentTaskId);*/
                 resourceSoC = (ResourceSoC) setCommonAttributes(resourceSoC, resourceSoCDTO);
 
                 Optional.ofNullable(resourceSoCDTO.getArchitecture()).ifPresent(resourceSoC::setArchitecture);
