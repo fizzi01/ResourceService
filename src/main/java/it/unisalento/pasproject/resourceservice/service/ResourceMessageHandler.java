@@ -4,6 +4,7 @@ import it.unisalento.pasproject.resourceservice.business.io.exchanger.MessageExc
 import it.unisalento.pasproject.resourceservice.business.io.producer.MessageProducer;
 import it.unisalento.pasproject.resourceservice.domain.Resource;
 import it.unisalento.pasproject.resourceservice.dto.*;
+import it.unisalento.pasproject.resourceservice.exceptions.ResourceNotFoundException;
 import it.unisalento.pasproject.resourceservice.repositories.ResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,7 @@ public class ResourceMessageHandler {
         Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
-            throw new RuntimeException("Resource not found");
+            throw new ResourceNotFoundException("Resource not found");
         }
 
         Resource retResource = resource.get();
@@ -98,7 +99,7 @@ public class ResourceMessageHandler {
         Optional<Resource> resource = resourceRepository.findById(message.getId());
 
         if (resource.isEmpty()) {
-            throw new RuntimeException("Resource not found");
+            throw new ResourceNotFoundException("Resource not found");
         }
 
         Resource retResource = resource.get();
