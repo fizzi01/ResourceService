@@ -512,10 +512,12 @@ public class ResourceService {
     public List<Resource> findResources(ResourceQueryFilters resourceQueryFilters) {
         Query query = new Query();
 
-        query.addCriteria(Criteria.where("type").is(resourceQueryFilters.getType()));
-
         // If available is not provided, only return available resources
         query.addCriteria(Criteria.where("isAvailable").is(Objects.requireNonNullElse(resourceQueryFilters.getIsAvailable(), true)));
+
+        if (resourceQueryFilters.getType() != null) {
+            query.addCriteria(Criteria.where("type").is(resourceQueryFilters.getType()));
+        }
 
         // Add conditions based on parameters provided
         if (resourceQueryFilters.getName() != null) {
@@ -539,11 +541,11 @@ public class ResourceService {
         }
 
         if (resourceQueryFilters.getFrom() != null) {
-            query.addCriteria(Criteria.where("availability.availableFrom").gte(resourceQueryFilters.getFrom()));
+            query.addCriteria(Criteria.where("availability.startTime").gte(resourceQueryFilters.getFrom()));
         }
 
         if (resourceQueryFilters.getTo() != null) {
-            query.addCriteria(Criteria.where("availability.availableUntil").lte(resourceQueryFilters.getTo()));
+            query.addCriteria(Criteria.where("availability.endTime").lte(resourceQueryFilters.getTo()));
         }
 
         if (resourceQueryFilters.getKWh() != null) {
@@ -551,7 +553,7 @@ public class ResourceService {
         }
 
         if (resourceQueryFilters.getMemberEmail() != null) {
-            query.addCriteria(Criteria.where("memberMail").is(resourceQueryFilters.getMemberEmail()));
+            query.addCriteria(Criteria.where("memberEmail").is(resourceQueryFilters.getMemberEmail()));
         }
 
         LOGGER.info("\n{}\n", query);
