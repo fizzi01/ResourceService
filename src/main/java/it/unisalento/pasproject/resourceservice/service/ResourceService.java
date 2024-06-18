@@ -74,6 +74,7 @@ public class ResourceService {
     }
 
     public ResourceDTO setCommonAttributes(ResourceDTO resourceDTO, Resource resource) {
+        Optional.ofNullable(resource.getId()).ifPresent(resourceDTO::setId);
         Optional.ofNullable(resource.getName()).ifPresent(resourceDTO::setName);
         Optional.ofNullable(resource.getType()).ifPresent(resourceDTO::setType);
         Optional.ofNullable(resource.getBrand()).ifPresent(resourceDTO::setBrand);
