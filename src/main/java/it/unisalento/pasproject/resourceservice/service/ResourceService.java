@@ -54,11 +54,52 @@ public class ResourceService {
         this.resourceRepository = resourceRepository;
     }
 
+    private void setBrandAndModel(Resource resource, String name) {
+        String[] parts = name.split(" ", 2);
+        if (parts.length >= 2) {
+            switch (parts[0]) {
+                case "Radeon" -> {
+                    resource.setBrand("AMD");
+                    resource.setModel(name);
+                }
+                case "GeForce" -> {
+                    resource.setBrand("NVIDIA");
+                    resource.setModel(name);
+                }
+                default -> {
+                    resource.setBrand(parts[0]);
+                    resource.setModel(parts[1]);
+                }
+            }
+        }
+    }
+
+    private void setBrandAndModel(ResourceDTO resourceDTO, String name) {
+        String[] parts = name.split(" ", 2);
+        if (parts.length >= 2) {
+            switch (parts[0]) {
+                case "Radeon" -> {
+                    resourceDTO.setBrand("AMD");
+                    resourceDTO.setModel(name);
+                }
+                case "GeForce" -> {
+                    resourceDTO.setBrand("NVIDIA");
+                    resourceDTO.setModel(name);
+                }
+                default -> {
+                    resourceDTO.setBrand(parts[0]);
+                    resourceDTO.setModel(parts[1]);
+                }
+            }
+        }
+    }
+
     public Resource setCommonAttributes(Resource resource, ResourceDTO resourceDTO) {
-        Optional.ofNullable(resourceDTO.getName()).ifPresent(resource::setName);
+        Optional.ofNullable(resourceDTO.getName()).ifPresent(name -> {
+            resource.setName(name);
+            setBrandAndModel(resource, name);
+        });
         Optional.ofNullable(resourceDTO.getType()).ifPresent(resource::setType);
-        Optional.ofNullable(resourceDTO.getBrand()).ifPresent(resource::setBrand);
-        Optional.ofNullable(resourceDTO.getModel()).ifPresent(resource::setModel);
         Optional.ofNullable(resourceDTO.getGreenEnergyType()).ifPresent(resource::setGreenEnergyType);
         Optional.ofNullable(resourceDTO.getCountry()).ifPresent(resource::setCountry);
         Optional.ofNullable(resourceDTO.getRegion()).ifPresent(resource::setRegion);
@@ -75,10 +116,11 @@ public class ResourceService {
 
     public ResourceDTO setCommonAttributes(ResourceDTO resourceDTO, Resource resource) {
         Optional.ofNullable(resource.getId()).ifPresent(resourceDTO::setId);
-        Optional.ofNullable(resource.getName()).ifPresent(resourceDTO::setName);
+        Optional.ofNullable(resource.getName()).ifPresent(name -> {
+            resourceDTO.setName(name);
+            setBrandAndModel(resourceDTO, name);
+        });
         Optional.ofNullable(resource.getType()).ifPresent(resourceDTO::setType);
-        Optional.ofNullable(resource.getBrand()).ifPresent(resourceDTO::setBrand);
-        Optional.ofNullable(resource.getModel()).ifPresent(resourceDTO::setModel);
         Optional.ofNullable(resource.getGreenEnergyType()).ifPresent(resourceDTO::setGreenEnergyType);
         Optional.ofNullable(resource.getCountry()).ifPresent(resourceDTO::setCountry);
         Optional.ofNullable(resource.getRegion()).ifPresent(resourceDTO::setRegion);
