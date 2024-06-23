@@ -554,8 +554,9 @@ public class ResourceService {
     public List<Resource> findResources(ResourceQueryFilters resourceQueryFilters) {
         Query query = new Query();
 
-        // If available is not provided, only return available resources
-        query.addCriteria(Criteria.where("isAvailable").is(Objects.requireNonNullElse(resourceQueryFilters.getIsAvailable(), true)));
+        if (resourceQueryFilters.getIsAvailable() != null) {
+            query.addCriteria(Criteria.where("isAvailable").is(resourceQueryFilters.getType()));
+        }
 
         if (resourceQueryFilters.getType() != null) {
             query.addCriteria(Criteria.where("type").is(resourceQueryFilters.getType()));
