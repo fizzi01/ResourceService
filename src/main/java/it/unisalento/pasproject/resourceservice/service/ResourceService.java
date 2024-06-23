@@ -66,6 +66,10 @@ public class ResourceService {
                     resource.setBrand("NVIDIA");
                     resource.setModel(name);
                 }
+                case "Arc", "Iris", "UHD" -> {
+                    resource.setBrand("Intel");
+                    resource.setModel(name);
+                }
                 default -> {
                     resource.setBrand(parts[0]);
                     resource.setModel(parts[1]);
