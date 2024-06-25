@@ -81,9 +81,6 @@ public class ResourceController {
 
         List<Resource> resources = resourceService.findResources(resourceQueryFilters);
 
-        if (resources.isEmpty())
-            throw new ResourceNotFoundException("No resources found with the given criteria.");
-
         for (Resource resource : resources) {
             list.add(resourceService.getResourceDTO(resource));
         }
