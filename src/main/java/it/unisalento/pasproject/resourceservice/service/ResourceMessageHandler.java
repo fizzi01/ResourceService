@@ -86,6 +86,8 @@ public class ResourceMessageHandler {
 
         Resource retResource = resource.get();
 
+        LOGGER.info("Received resource assignment message with status: " + message.getStatus());
+
         Optional.ofNullable(message.getStatus())
                 .map(Enum::name)
                 .map(Resource.Status::valueOf)
@@ -109,10 +111,13 @@ public class ResourceMessageHandler {
 
         Resource retResource = resource.get();
 
+        LOGGER.info("Received resource assignment message with status: " + message.getStatus());
+
         Optional.ofNullable(message.getStatus())
                 .map(Enum::name)
                 .map(Resource.Status::valueOf)
                 .ifPresent(retResource::setStatus);
+
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
 
         resourceRepository.save(retResource);
