@@ -3,6 +3,7 @@ package it.unisalento.pasproject.resourceservice.service;
 import it.unisalento.pasproject.resourceservice.domain.*;
 import it.unisalento.pasproject.resourceservice.dto.*;
 import it.unisalento.pasproject.resourceservice.exceptions.BadFormatAvailabilityException;
+import it.unisalento.pasproject.resourceservice.exceptions.ResourceStatusUpdateException;
 import it.unisalento.pasproject.resourceservice.repositories.ResourceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +13,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -112,7 +111,10 @@ public class ResourceService {
         Optional.ofNullable(resourceDTO.getAvailability()).ifPresent(resource::setAvailability);
         Optional.of(resourceDTO.getKWh()).ifPresent(resource::setKWh);
         Optional.ofNullable(resourceDTO.getMemberEmail()).ifPresent(resource::setMemberEmail);
-        Optional.ofNullable(resourceDTO.getIsAvailable()).ifPresent(resource::setIsAvailable);
+        Optional.ofNullable(resourceDTO.getStatus())
+                .map(Enum::name)
+                .map(Resource.Status::valueOf)
+                .ifPresent(resource::setStatus);
         Optional.ofNullable(resourceDTO.getCurrentTaskId()).ifPresent(resource::setCurrentTaskId);
 
         return resource;
@@ -133,7 +135,10 @@ public class ResourceService {
         Optional.ofNullable(resource.getAvailability()).ifPresent(resourceDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceDTO::setMemberEmail);
-        Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceDTO::setIsAvailable);
+        Optional.ofNullable(resource.getStatus())
+                .map(Enum::name)
+                .map(ResourceDTO.Status::valueOf)
+                .ifPresent(resourceDTO::setStatus);
         Optional.ofNullable(resource.getCurrentTaskId()).ifPresent(resourceDTO::setCurrentTaskId);
 
         return resourceDTO;
@@ -345,6 +350,10 @@ public class ResourceService {
 
         Resource retResource = resource.get();
 
+        if (retResource.getStatus().equals(Resource.Status.BUSY) || retResource.getStatus().equals(Resource.Status.AVAILABLE)) {
+            throw new ResourceStatusUpdateException("The resource must be UNAVAILABLE to be updated. Please wait until it becomes available to change its status and then update it.");
+        }
+
         switch (resourceDTO) {
             case ResourceCpuDTO resourceCpuDTO -> {
                 ResourceCPU resourceCPU = (ResourceCPU) retResource;
@@ -464,7 +473,7 @@ public class ResourceService {
         }
     }
 
-    public ResourceDTO updateIsAvailable(String id, boolean available) {
+    public ResourceDTO updateStatus(String id, Resource.Status status) {
         Optional<Resource> resource = resourceRepository.findById(id);
 
         if(resource.isEmpty()) {
@@ -473,7 +482,11 @@ public class ResourceService {
 
         Resource retResource = resource.get();
 
-        retResource.setIsAvailable(available);
+        if (retResource.getStatus().equals(Resource.Status.BUSY)) {
+            throw new ResourceStatusUpdateException("Resource is busy and its status cannot be updated");
+        }
+
+        retResource.setStatus(status);
         retResource = resourceRepository.save(retResource);
 
         switch (retResource) {
@@ -508,7 +521,10 @@ public class ResourceService {
         Optional.ofNullable(resource.getAvailability()).ifPresent(resourceMessageDTO::setAvailability);
         Optional.of(resource.getKWh()).ifPresent(resourceMessageDTO::setKWh);
         Optional.ofNullable(resource.getMemberEmail()).ifPresent(resourceMessageDTO::setMemberEmail);
-        Optional.ofNullable(resource.getIsAvailable()).ifPresent(resourceMessageDTO::setIsAvailable);
+        Optional.ofNullable(resource.getStatus())
+                .map(Enum::name)
+                .map(ResourceMessageDTO.Status::valueOf)
+                .ifPresent(resourceMessageDTO::setStatus);
         Optional.ofNullable(resource.getCurrentTaskId()).ifPresent(resourceMessageDTO::setCurrentTaskId);
 
         switch (resource) {
@@ -558,8 +574,8 @@ public class ResourceService {
     public List<Resource> findResources(ResourceQueryFilters resourceQueryFilters) {
         Query query = new Query();
 
-        if (resourceQueryFilters.getIsAvailable() != null) {
-            query.addCriteria(Criteria.where("isAvailable").is(resourceQueryFilters.getType()));
+        if (resourceQueryFilters.getStatus() != null) {
+            query.addCriteria(Criteria.where("status").is(resourceQueryFilters.getStatus()));
         }
 
         if (resourceQueryFilters.getType() != null) {

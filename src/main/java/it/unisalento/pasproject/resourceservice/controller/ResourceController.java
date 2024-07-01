@@ -142,7 +142,7 @@ public class ResourceController {
     @PutMapping(value="/available/{id}")
     @Secured({ROLE_MEMBRO})
     public ResourceDTO makeAvailable(@PathVariable String id) throws ResourceNotFoundException {
-        ResourceDTO resourceDTO = resourceService.updateIsAvailable(id, true);
+        ResourceDTO resourceDTO = resourceService.updateStatus(id, Resource.Status.AVAILABLE);
 
         if (resourceDTO == null) {
             throw new ResourceNotFoundException("Resource not found with id: " + id + ".");
@@ -161,7 +161,7 @@ public class ResourceController {
     @PutMapping(value="/unavailable/{id}")
     @Secured({ROLE_MEMBRO})
     public ResourceDTO makeUnavailable(@PathVariable String id) throws ResourceNotFoundException {
-        ResourceDTO resourceDTO = resourceService.updateIsAvailable(id, false);
+        ResourceDTO resourceDTO = resourceService.updateStatus(id, Resource.Status.UNAVAILABLE);
 
         if (resourceDTO == null) {
             throw new ResourceNotFoundException("Resource not found with id: " + id + ".");

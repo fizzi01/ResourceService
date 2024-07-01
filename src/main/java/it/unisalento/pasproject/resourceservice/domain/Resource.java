@@ -16,6 +16,12 @@ import java.util.List;
 @Setter
 @Document(collection = "resource")
 public abstract class Resource {
+    public enum Status {
+        AVAILABLE,
+        BUSY,
+        UNAVAILABLE
+    }
+
     /**
      * The unique identifier of the resource.
      */
@@ -69,7 +75,7 @@ public abstract class Resource {
     /**
      * Whether the resource is available.
      */
-    private Boolean isAvailable;
+    private Status status;
 
     /**
      * The user to whom the resource is assigned.

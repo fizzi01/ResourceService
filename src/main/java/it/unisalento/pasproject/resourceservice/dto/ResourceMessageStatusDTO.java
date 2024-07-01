@@ -10,9 +10,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResourceMessageStatusDTO {
+    public enum Status {
+        AVAILABLE,
+        BUSY,
+        UNAVAILABLE
+    }
+
     private String id;
 
-    private Boolean isAvailable;
+    private Status status;
 
     private String currentTaskId;
 }

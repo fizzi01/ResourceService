@@ -13,6 +13,12 @@ import java.util.List;
 @Getter
 @Setter
 public class ResourceMessageDTO {
+    public enum Status {
+        AVAILABLE,
+        BUSY,
+        UNAVAILABLE
+    }
+
     /**
      * The ID of the resource.
      */
@@ -38,7 +44,7 @@ public class ResourceMessageDTO {
     /**
      * Whether the resource is currently available.
      */
-    private Boolean isAvailable;
+    private Status status;
 
     /**
      * The user to whom the resource is currently assigned.

@@ -86,7 +86,10 @@ public class ResourceMessageHandler {
 
         Resource retResource = resource.get();
 
-        Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);
+        Optional.ofNullable(message.getStatus())
+                .map(Enum::name)
+                .map(Resource.Status::valueOf)
+                .ifPresent(retResource::setStatus);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
     }
 
@@ -104,7 +107,10 @@ public class ResourceMessageHandler {
 
         Resource retResource = resource.get();
 
-        Optional.ofNullable(message.getIsAvailable()).ifPresent(retResource::setIsAvailable);
+        Optional.ofNullable(message.getStatus())
+                .map(Enum::name)
+                .map(Resource.Status::valueOf)
+                .ifPresent(retResource::setStatus);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
     }
 }

@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ResourceQueryFilters {
+    public enum Status {
+        AVAILABLE,
+        BUSY,
+        UNAVAILABLE,
+    }
+
     private String name;
     private String type;
     private String greenEnergyType;
@@ -18,5 +24,5 @@ public class ResourceQueryFilters {
     private LocalDateTime to;
     private Double kWh;
     private String memberEmail;
-    private Boolean isAvailable;
+    private Status status;
 }
