@@ -91,6 +91,8 @@ public class ResourceMessageHandler {
                 .map(Resource.Status::valueOf)
                 .ifPresent(retResource::setStatus);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
+
+        resourceRepository.save(retResource);
     }
 
     /**
@@ -112,5 +114,7 @@ public class ResourceMessageHandler {
                 .map(Resource.Status::valueOf)
                 .ifPresent(retResource::setStatus);
         Optional.ofNullable(message.getCurrentTaskId()).ifPresent(retResource::setCurrentTaskId);
+
+        resourceRepository.save(retResource);
     }
 }
