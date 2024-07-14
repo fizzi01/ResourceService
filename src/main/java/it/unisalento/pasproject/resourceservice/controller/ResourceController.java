@@ -26,7 +26,7 @@ import static it.unisalento.pasproject.resourceservice.security.SecurityConstant
 @RestController
 @RequestMapping("/api/resource")
 public class ResourceController {
-    final ResourceRepository resourceRepository;
+    private final ResourceRepository resourceRepository;
 
     private final ResourceService resourceService;
 
@@ -97,7 +97,7 @@ public class ResourceController {
     @PostMapping(value="/insertResource", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_MEMBRO})
     public ResourceDTO insertResource(@RequestBody ResourceDTO newResource) {
-        LOGGER.info("New resource arrived: {}", newResource.getAvailability());
+        LOGGER.info("New resource arrived: {}", newResource.getName());
 
         ResourceDTO resourceDTO = resourceService.insertResource(newResource);
 
